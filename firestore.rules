@@ -11,7 +11,8 @@ service cloud.firestore {
 
     // Users collection
     match /users/{userId} {
-      allow read, write: if isOwner(userId);
+      allow read: if true;
+      allow write: if isOwner(userId);
     }
   }
 }

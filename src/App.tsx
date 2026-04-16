@@ -15,6 +15,7 @@ import LearningPath from './components/LearningPath';
 import Profile from './components/Profile';
 import AIAssistant from './components/AIAssistant';
 import WordMeaning from './components/WordMeaning';
+import Leaderboard from './components/Leaderboard';
 import AuthPage from './components/AuthPage';
 
 export default function App() {
@@ -107,6 +108,7 @@ export default function App() {
           <Route path="profile" element={<Profile diamonds={diamonds} />} />
           <Route path="ai-assistant" element={<AIAssistant />} />
           <Route path="word-meaning" element={<WordMeaning setDiamonds={setDiamonds} />} />
+          <Route path="leaderboard" element={<Leaderboard />} />
         </Route>
       </Routes>
     </Router>
