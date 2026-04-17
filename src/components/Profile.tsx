@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { auth, db } from '../lib/firebase';
 import { signOut } from 'firebase/auth';
-import { doc, getDoc, collection, query, orderBy, limit, getDocs, where, getCountFromServer } from 'firebase/firestore';
+import { doc, getDoc, collection, query, orderBy, limit, getDocs, where, getCountFromServer, updateDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, Diamond, User as UserIcon, Trophy, Medal } from 'lucide-react';
+import { LogOut, User as UserIcon, Trophy, Medal, Pencil, Check, X } from 'lucide-react';
 
 interface ProfileProps {
   diamonds: number;
@@ -18,8 +18,12 @@ interface LeaderboardUser {
 
 export default function Profile({ diamonds }: ProfileProps) {
   const [name, setName] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
+  const [editName, setEditName] = useState('');
+  const [isUpdating, setIsUpdating] = useState(false);
   const [leaderboard, setLeaderboard] = useState<LeaderboardUser[]>([]);
   const [userRank, setUserRank] = useState<number | null>(null);
+  const isMounted = React.useRef(true);
   const user = auth.currentUser;
 
   // Generate a deterministic 12-digit numeric ID from the Firebase UID
@@ -30,72 +34,92 @@ export default function Profile({ diamonds }: ProfileProps) {
   };
 
   useEffect(() => {
-    let isMounted = true;
+    isMounted.current = true;
+    return () => { isMounted.current = false; };
+  }, []);
 
-    const fetchData = async () => {
-      if (user) {
-        try {
-          // Fetch current user data
-          const docRef = doc(db, 'users', user.uid);
-          const docSnap = await getDoc(docRef);
-          if (isMounted) {
-            if (docSnap.exists()) {
-              setName(docSnap.data().name || user.displayName || 'User');
-            } else {
-              setName(user.displayName || 'User');
-            }
-          }
-
-          // Fetch leaderboard data
-          const usersRef = collection(db, 'users');
-          const q = query(usersRef, orderBy('diamonds', 'desc'), limit(10));
-          const querySnapshot = await getDocs(q);
-          
-          const leaderboardData: LeaderboardUser[] = [];
-          querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            leaderboardData.push({
-              id: doc.id,
-              name: data.name || 'Anonymous',
-              diamonds: data.diamonds || 0,
-              displayId: get12DigitId(doc.id)
-            });
-          });
-
-          if (isMounted) {
-            setLeaderboard(leaderboardData);
-          }
-
-          // Calculate user rank
-          const userIndex = leaderboardData.findIndex(u => u.id === user.uid);
-          if (userIndex !== -1) {
-            if (isMounted) setUserRank(userIndex + 1);
+  const fetchData = async () => {
+    if (user) {
+      try {
+        const docRef = doc(db, 'users', user.uid);
+        const docSnap = await getDoc(docRef);
+        if (isMounted.current) {
+          if (docSnap.exists()) {
+            setName(docSnap.data().name || user.displayName || 'User');
           } else {
-            try {
-              const rankQuery = query(usersRef, where('diamonds', '>', diamonds));
-              const rankSnapshot = await getCountFromServer(rankQuery);
-              if (isMounted) setUserRank(rankSnapshot.data().count + 1);
-            } catch (e) {
-              console.error("Error fetching rank:", e);
-              if (isMounted) setUserRank(null);
-            }
-          }
-
-        } catch (error) {
-          console.error("Error fetching data:", error);
-          if (isMounted) {
             setName(user.displayName || 'User');
           }
         }
+
+        const usersRef = collection(db, 'users');
+        const q = query(usersRef, orderBy('diamonds', 'desc'), limit(10));
+        const querySnapshot = await getDocs(q);
+        
+        const leaderboardData: LeaderboardUser[] = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          leaderboardData.push({
+            id: doc.id,
+            name: data.name || 'Anonymous',
+            diamonds: data.diamonds || 0,
+            displayId: get12DigitId(doc.id)
+          });
+        });
+
+        if (isMounted.current) {
+          setLeaderboard(leaderboardData);
+        }
+
+        const userIndex = leaderboardData.findIndex(u => u.id === user.uid);
+        if (userIndex !== -1) {
+          if (isMounted.current) setUserRank(userIndex + 1);
+        } else {
+          try {
+            const rankQuery = query(usersRef, where('diamonds', '>', diamonds));
+            const rankSnapshot = await getCountFromServer(rankQuery);
+            if (isMounted.current) setUserRank(rankSnapshot.data().count + 1);
+          } catch (e) {
+            console.error("Error fetching rank:", e);
+            if (isMounted.current) setUserRank(null);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        if (isMounted.current) {
+          setName(user.displayName || 'User');
+        }
       }
-    };
+    }
+  };
 
+  const handleUpdateName = async () => {
+    if (!user || isUpdating || !editName.trim()) return;
+    
+    setIsUpdating(true);
+    try {
+      const userRef = doc(db, 'users', user.uid);
+      await updateDoc(userRef, {
+        name: editName.trim()
+      });
+      setName(editName.trim());
+      setIsEditing(false);
+      fetchData();
+    } catch (error) {
+      console.error("Error updating name:", error);
+      alert("Failed to update name. Please try again.");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const startEditing = () => {
+    setEditName(name);
+    setIsEditing(true);
+  };
+
+  useEffect(() => {
     fetchData();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [user, diamonds]); // Re-fetch if diamonds change
+  }, [user, diamonds]);
 
   const handleLogout = async () => {
     try {
@@ -159,7 +183,47 @@ export default function Profile({ diamonds }: ProfileProps) {
 
             {/* User Info */}
             <div className="pt-20 text-center">
-              <h2 className="text-2xl font-bold text-gray-900 mb-1">{name}</h2>
+              <div className="flex items-center justify-center gap-2 mb-1 group">
+                {isEditing ? (
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={editName}
+                      onChange={(e) => setEditName(e.target.value)}
+                      className="text-2xl font-bold text-gray-900 border-b-2 border-primary outline-none bg-transparent text-center w-full max-w-[200px]"
+                      autoFocus
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') handleUpdateName();
+                        if (e.key === 'Escape') setIsEditing(false);
+                      }}
+                    />
+                    <button 
+                      onClick={handleUpdateName}
+                      disabled={isUpdating}
+                      className="p-1 text-green-600 hover:bg-green-50 rounded-full transition-colors"
+                    >
+                      <Check size={20} />
+                    </button>
+                    <button 
+                      onClick={() => setIsEditing(false)}
+                      className="p-1 text-red-600 hover:bg-red-50 rounded-full transition-colors"
+                    >
+                      <X size={20} />
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <h2 className="text-2xl font-bold text-gray-900">{name}</h2>
+                    <button 
+                      onClick={startEditing}
+                      className="p-1 text-gray-400 hover:text-primary transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
+                      title="Edit Name"
+                    >
+                      <Pencil size={16} />
+                    </button>
+                  </>
+                )}
+              </div>
               <p className="text-gray-500 text-sm mb-4">{user.email}</p>
               <div className="inline-flex items-center justify-center bg-gray-100 px-4 py-2 rounded-xl mb-8">
                 <span className="text-xs text-gray-500 uppercase font-bold mr-2">ID</span>
@@ -169,8 +233,8 @@ export default function Profile({ diamonds }: ProfileProps) {
               {/* Stats Grid */}
               <div className="grid grid-cols-2 gap-4 mb-8">
                 <div className="bg-blue-50 rounded-2xl p-4 border border-blue-100 flex flex-col items-center justify-center transition-transform hover:scale-105">
-                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-3 text-blue-600">
-                    <Diamond size={24} />
+                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-3 text-2xl">
+                    💎
                   </div>
                   <span className="text-2xl font-bold text-blue-900">{diamonds}</span>
                   <span className="text-xs font-bold text-blue-600 uppercase tracking-wider mt-1">Diamonds</span>
@@ -235,7 +299,7 @@ export default function Profile({ diamonds }: ProfileProps) {
                     </div>
                   </div>
                   <div className="flex items-center gap-1 bg-white px-3 py-1.5 rounded-lg shadow-sm border border-gray-100">
-                    <Diamond size={16} className="text-blue-500" />
+                    <span className="text-lg leading-none">💎</span>
                     <span className="font-bold text-gray-900">{lbUser.diamonds}</span>
                   </div>
                 </div>

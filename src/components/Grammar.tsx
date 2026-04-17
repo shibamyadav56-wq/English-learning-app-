@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BookOpen, ArrowLeft, Trophy, Gem, CheckCircle2, XCircle } from 'lucide-react';
+import { BookOpen, ArrowLeft, Trophy, CheckCircle2, XCircle } from 'lucide-react';
 import { GRAMMAR_TOPICS } from '../constants/grammar';
 
 export default function Grammar({ diamonds, setDiamonds }: { diamonds: number, setDiamonds: (d: number | ((prev: number) => number)) => void }) {
@@ -89,7 +89,7 @@ export default function Grammar({ diamonds, setDiamonds }: { diamonds: number, s
             earnedNow ? (
               <div className="bg-green-100 border border-green-300 p-6 rounded-2xl mb-8 animate-bounce">
                 <p className="text-green-800 font-bold text-xl flex items-center justify-center gap-2">
-                  <Gem size={28} className="text-green-600" /> +10 Diamonds Earned!
+                  <span className="text-2xl leading-none">💎</span> +10 Diamonds Earned!
                 </p>
                 <p className="text-green-700 mt-2">Excellent job! You mastered this topic.</p>
               </div>
@@ -240,7 +240,7 @@ export default function Grammar({ diamonds, setDiamonds }: { diamonds: number, s
                     <div className="mt-4 flex items-center gap-2 text-sm font-bold text-primary">
                       <span>Read Notes & Take Quiz</span>
                       <span className="text-gray-300">•</span>
-                      <span className="text-accent flex items-center gap-1"><Gem size={14} /> 10</span>
+                      <span className="text-accent flex items-center gap-1"><span className="text-sm leading-none">💎</span> 10</span>
                     </div>
                   </div>
                 </div>

@@ -50,31 +50,40 @@ export default function AuthPage() {
         <h2 className="text-3xl font-bold mb-8 text-center font-display text-gray-900">{isLogin ? 'Login' : 'Sign Up'}</h2>
         <form onSubmit={handleAuth}>
           {!isLogin && (
+            <div className="mb-4">
+              <label className="block text-sm font-semibold text-gray-700 mb-1 ml-1">Name</label>
+              <input
+                type="text"
+                placeholder="Enter your name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full p-4 border border-gray-200 rounded-2xl outline-none focus:border-primary"
+                required
+              />
+            </div>
+          )}
+          <div className="mb-4">
+            <label className="block text-sm font-semibold text-gray-700 mb-1 ml-1">Email ID</label>
             <input
-              type="text"
-              placeholder="Enter your name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full p-4 mb-4 border border-gray-200 rounded-2xl outline-none focus:border-primary"
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full p-4 border border-gray-200 rounded-2xl outline-none focus:border-primary"
               required
             />
-          )}
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-4 mb-4 border border-gray-200 rounded-2xl outline-none focus:border-primary"
-            required
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-4 mb-6 border border-gray-200 rounded-2xl outline-none focus:border-primary"
-            required
-          />
+          </div>
+          <div className="mb-6">
+            <label className="block text-sm font-semibold text-gray-700 mb-1 ml-1">Password</label>
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full p-4 border border-gray-200 rounded-2xl outline-none focus:border-primary"
+              required
+            />
+          </div>
           <button type="submit" className="w-full bg-primary text-white p-4 rounded-2xl font-bold mb-4 hover:bg-blue-700 transition">
             {isLogin ? 'Login' : 'Sign Up'}
           </button>

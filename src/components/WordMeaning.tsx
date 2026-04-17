@@ -40,15 +40,35 @@ export default function WordMeaning({ setDiamonds }: { setDiamonds: (d: number |
         {WORD_LIST.map((word, i) => (
           <div 
             key={i} 
-            className={`p-4 rounded-2xl shadow-sm ${i < unlockedWords ? 'bg-white border border-gray-100' : 'bg-gray-200 blur-sm'}`}
+            className={`relative overflow-hidden p-4 rounded-2xl shadow-sm transition-all duration-500 ${
+              i < unlockedWords 
+                ? 'bg-white border border-gray-100' 
+                : 'bg-white border border-gray-50'
+            }`}
           >
             {i < unlockedWords ? (
-              <div>
+              <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
                 <p className="font-bold text-lg text-gray-900">{word.english} - {word.hindi}</p>
                 <p className="text-gray-600 italic">{word.example}</p>
                 <p className="text-gray-500 text-sm">{word.exampleHindi}</p>
               </div>
-            ) : 'Word Locked'}
+            ) : (
+              <div className="h-16 flex items-center justify-center">
+                {/* Cloud/Fog Effect Overlay */}
+                <div className="absolute inset-0 bg-white/90 backdrop-blur-md flex items-center justify-center">
+                  <div className="flex gap-1">
+                    {[1, 2, 3].map((n) => (
+                      <div 
+                        key={n} 
+                        className="w-8 h-8 bg-gray-100 rounded-full blur-md animate-pulse" 
+                        style={{ animationDelay: `${n * 0.2}s` }}
+                      />
+                    ))}
+                  </div>
+                  <span className="absolute font-bold text-gray-300 tracking-widest uppercase text-xs">Locked</span>
+                </div>
+              </div>
+            )}
           </div>
         ))}
       </div>

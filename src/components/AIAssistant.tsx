@@ -56,7 +56,15 @@ export default function AIAssistant() {
     setLoading(true);
 
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
+      // Prioritize Vite environment variables for Netlify/Local Dev
+      const apiKey = (import.meta as any).env.VITE_GEMINI_API_KEY || 
+                    (typeof process !== 'undefined' ? process.env.GEMINI_API_KEY : '');
+      
+      if (!apiKey) {
+        throw new Error("API Key not found. Please ensure VITE_GEMINI_API_KEY is configured in your environment.");
+      }
+
+      const ai = new GoogleGenAI({ apiKey });
       
       const systemPrompt = `You are a highly knowledgeable AI assistant. Provide deep, detailed, and comprehensive answers to all questions. 
       However, you are STRICTLY FORBIDDEN from answering questions related to sex education or coding for games. 
@@ -93,9 +101,12 @@ export default function AIAssistant() {
           return newMessages;
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("AI Error:", error);
-      setMessages(prev => [...prev, { role: 'ai', text: 'Error getting response. Please try again.' }]);
+      const errorMessage = error.message?.includes("API Key not found") 
+        ? "Error: API Key nahi mili. Netlify settings mein VITE_GEMINI_API_KEY check karein." 
+        : "Error getting response. Please try again or check your API key.";
+      setMessages(prev => [...prev, { role: 'ai', text: errorMessage }]);
     } finally {
       setLoading(false);
     }

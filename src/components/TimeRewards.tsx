@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Gem, X, Clock, Gift } from 'lucide-react';
+import { X, Clock, Gift } from 'lucide-react';
 
 export default function Rewards({ onClose, onClaim }: { onClose: () => void, onClaim: (amount: number) => void }) {
   const [activeTab, setActiveTab] = useState<'daily' | 'time'>('daily');
@@ -68,7 +68,10 @@ export default function Rewards({ onClose, onClaim }: { onClose: () => void, onC
       <div className="bg-white p-4 rounded-2xl border-2 border-blue-100 shadow-sm">
         <div className="flex justify-between items-center mb-2">
           <span className="font-bold text-blue-900">{minutes} min Reward</span>
-          <span className="text-blue-600 font-bold">+{minutes === 10 ? 5 : minutes === 20 ? 15 : 50} 💎</span>
+          <span className="text-blue-600 font-bold flex items-center gap-1">
+            +{minutes === 10 ? 5 : minutes === 20 ? 15 : 50} 
+            <span className="text-lg leading-none">💎</span>
+          </span>
         </div>
         <div className="w-full bg-gray-200 rounded-full h-3 mb-3">
           <div className="bg-blue-500 h-3 rounded-full transition-all duration-500" style={{ width: `${progress}%` }}></div>
@@ -106,7 +109,7 @@ export default function Rewards({ onClose, onClaim }: { onClose: () => void, onC
               return (
                 <div key={d} className={`aspect-square flex flex-col items-center justify-center border-2 rounded-2xl font-bold text-xs p-1 ${isClaimed ? 'bg-green-100 border-green-300 text-green-800' : isAvailable ? 'bg-yellow-100 border-yellow-400 text-yellow-900' : 'bg-gray-100 border-gray-200 text-gray-400'}`}>
                   <span>Day {d}</span>
-                  <span className="text-xs">{d * 5} 💎</span>
+                  <span className="text-[10px] flex items-center gap-0.5">{d * 5} <span className="leading-none">💎</span></span>
                   {isAvailable && (
                     <button onClick={() => handleClaimDaily(d)} className="mt-1 bg-yellow-500 text-white text-[10px] px-2 py-1 rounded-lg">Claim</button>
                   )}

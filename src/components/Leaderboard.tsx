@@ -44,7 +44,10 @@ export default function Leaderboard() {
               </span>
               <span className="font-medium text-gray-800">{score.name}</span>
             </div>
-            <span className="font-bold text-accent">{score.diamonds} 💎</span>
+            <div className="flex items-center gap-1 font-bold text-accent">
+              <span>{score.diamonds}</span>
+              <span className="text-lg leading-none">💎</span>
+            </div>
           </div>
         ))}
       </div>

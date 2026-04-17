@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Home, BookOpen, Map, User, Gem } from 'lucide-react';
+import { Home, BookOpen, Map, User } from 'lucide-react';
 
 export default function Layout({ diamonds }: { diamonds: number }) {
   const location = useLocation();
@@ -16,7 +16,7 @@ export default function Layout({ diamonds }: { diamonds: number }) {
       <header className="flex justify-between items-center p-4 bg-white border-b border-gray-100">
         <h1 className="font-display text-xl font-bold text-gray-900">English Learner</h1>
         <div className="flex items-center gap-1 bg-yellow-50 px-3 py-1 rounded-full text-accent font-bold">
-          <Gem size={16} />
+          <span className="text-lg leading-none">💎</span>
           <span>{diamonds}</span>
         </div>
       </header>

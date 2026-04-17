@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bot, BookOpenText, Gift, Gem, Share2 } from 'lucide-react';
+import { Bot, BookOpenText, Gift, Share2 } from 'lucide-react';
 import Rewards from './TimeRewards';
 
 export default function Home({ diamonds, setDiamonds }: { diamonds: number, setDiamonds: (d: number | ((prev: number) => number)) => void }) {
@@ -26,7 +26,7 @@ export default function Home({ diamonds, setDiamonds }: { diamonds: number, setD
           <span className="font-semibold text-green-800">Rewards</span>
         </button>
         <div className="flex items-center gap-2 bg-yellow-50 p-2 rounded-full px-4">
-          <Gem className="text-accent" />
+          <span className="text-xl leading-none">💎</span>
           <span className="font-bold text-yellow-800">{diamonds}</span>
         </div>
       </div>
