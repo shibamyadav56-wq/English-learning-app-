@@ -84,8 +84,7 @@ export default function AIAssistant() {
         });
       }
 
-      const stream = await ai.models.generateContentStream({
-        model: "gemini-2.0-flash",
+      const stream = await ai.getGenerativeModel({ model: "gemini-1.5-flash" }).generateContentStream({
         contents: parts,
       });
 
@@ -96,16 +95,24 @@ export default function AIAssistant() {
           const newMessages = [...prev];
           const lastMessage = newMessages[newMessages.length - 1];
           if (lastMessage && lastMessage.role === 'ai') {
-            lastMessage.text += chunk.text || '';
+            lastMessage.text += chunk.text() || '';
           }
           return newMessages;
         });
       }
     } catch (error: any) {
-      console.error("AI Error:", error);
-      const errorMessage = error.message?.includes("API Key not found") 
-        ? "Error: API Key nahi mili. Netlify settings mein VITE_GEMINI_API_KEY check karein." 
-        : "Error getting response. Please try again or check your API key.";
+      console.error("AI Error details:", error);
+      let errorMessage = "Error getting response.";
+      
+      if (error.message?.includes("API Key not found")) {
+        errorMessage = "Error: API Key nahi mili. Netlify settings mein VITE_GEMINI_API_KEY check karein.";
+      } else if (error.message?.includes("API_KEY_INVALID")) {
+        errorMessage = "Error: Apka API Key galat hai. Kripya naya API Key generate karein.";
+      } else if (error.message) {
+        // Show the actual error message from Google to help debug
+        errorMessage = `AI Error: ${error.message}`;
+      }
+      
       setMessages(prev => [...prev, { role: 'ai', text: errorMessage }]);
     } finally {
       setLoading(false);
