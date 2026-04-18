@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { GoogleGenAI } from "@google/genai";
-import { Send, Bot, User, Plus, Image as ImageIcon, X } from 'lucide-react';
+import { Send, Bot, User as UserIcon, Plus, Image as ImageIcon, X } from 'lucide-react';
 
 type Message = {
   role: 'user' | 'ai';
@@ -132,7 +132,7 @@ export default function AIAssistant() {
         {messages.map((msg, i) => (
           <div key={i} className={`flex items-start gap-4 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
             <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 shadow-sm ${msg.role === 'user' ? 'bg-primary text-white' : 'bg-white text-slate-600'}`}>
-              {msg.role === 'user' ? <User size={20}/> : <Bot size={20}/>}
+              {msg.role === 'user' ? <UserIcon size={20}/> : <Bot size={20}/>}
             </div>
             <div className={`p-4 rounded-3xl max-w-[85%] ${msg.role === 'user' ? 'bg-primary text-white shadow-lg shadow-blue-500/10' : 'bg-white text-slate-900 shadow-sm border border-slate-100'}`}>
               {msg.imageUrl && (

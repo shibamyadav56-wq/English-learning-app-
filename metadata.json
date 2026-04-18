@@ -1,6 +1,6 @@
 {
-  "name": "Smart Learner",
-  "description": "An interactive English learning app with AI homework assistant, daily vocabulary, and grammar lessons.",
+  "name": "LinguaMaster AI",
+  "description": "Master English with AI-powered tutoring, interactive vocabulary, and smart grammar lessons.",
   "requestFramePermissions": [
     "camera"
   ],

@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Home, BookOpen, Map, User } from 'lucide-react';
+import { Home, BookOpen, Map, User as UserIcon } from 'lucide-react';
 
 export default function Layout({ diamonds }: { diamonds: number }) {
   const location = useLocation();
@@ -8,22 +8,12 @@ export default function Layout({ diamonds }: { diamonds: number }) {
     { path: '/', icon: Home, label: 'Home' },
     { path: '/grammar', icon: BookOpen, label: 'Grammar' },
     { path: '/learning-path', icon: Map, label: 'Path' },
-    { path: '/profile', icon: User, label: 'Profile' },
+    { path: '/profile', icon: UserIcon, label: 'Profile' },
   ];
 
   return (
     <div className="min-h-screen bg-slate-100 flex justify-center selection:bg-blue-100">
       <div className="app-container">
-        <header className="sticky top-0 z-[60] glass-effect flex justify-between items-center p-4 border-b border-gray-100 px-6">
-          <h1 className="font-display text-xl font-extrabold tracking-tight text-slate-900 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-            Smart Learner
-          </h1>
-          <div className="flex items-center gap-1.5 bg-white/80 backdrop-blur-md px-3 py-1.5 rounded-full font-black shadow-sm border border-slate-100 active:scale-95 transition">
-            <span className="text-lg leading-none">💎</span>
-            <span className="text-sm text-slate-800">{diamonds}</span>
-          </div>
-        </header>
-
         <main className="flex-grow overflow-y-auto pb-32">
           <Outlet />
         </main>

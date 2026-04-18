@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import VocabularyQuiz from './VocabularyQuiz';
 import { WORD_LIST } from '../constants/wordList';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Lock } from 'lucide-react';
 import Notification from './Notification';
 
 export default function WordMeaning({ setDiamonds }: { setDiamonds: (d: number | ((prev: number) => number)) => void }) {

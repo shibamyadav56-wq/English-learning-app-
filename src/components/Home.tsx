@@ -19,53 +19,54 @@ export default function Home({ diamonds, setDiamonds }: { diamonds: number, setD
   };
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Top Welcome Section */}
-      <section className="mt-2 flex justify-between items-start">
-        <div>
-          <h2 className="text-3xl font-black text-slate-900 tracking-tight leading-none mb-2">
-            Hello! 👋
-          </h2>
-          <p className="text-slate-500 font-medium">Ready to learn something today?</p>
+    <div className="p-6 space-y-8">
+      {/* Top Minimal Bar */}
+      <div className="flex justify-between items-center bg-white/50 backdrop-blur-md -mx-6 px-6 py-4 sticky top-0 z-20 border-b border-slate-200/50">
+        <h1 className="text-xl font-black text-slate-900 tracking-tight">LinguaMaster <span className="text-primary truncate">AI</span></h1>
+        <div className="flex items-center gap-2">
+          <button 
+            onClick={() => setShowRewards(true)} 
+            className="p-2 bg-amber-100 text-amber-600 rounded-xl active:scale-90 transition shadow-sm border border-amber-200/50"
+          >
+            <Gift size={18} strokeWidth={2.5} />
+          </button>
+          <div className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-full font-black shadow-sm border border-slate-200 min-w-[60px] justify-center">
+            <span className="text-sm leading-none">💎</span>
+            <span className="text-xs text-slate-700">{diamonds}</span>
+          </div>
         </div>
-        <button 
-          onClick={() => setShowRewards(true)} 
-          className="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 bounce-click flex items-center gap-2"
-        >
-          <div className="p-2 bg-amber-100 text-amber-600 rounded-xl">
-            <Gift size={20} strokeWidth={2.5} />
-          </div>
-          <div className="flex flex-col items-start pr-1">
-            <span className="text-[9px] uppercase font-black text-slate-400 leading-none">Daily</span>
-            <span className="text-xs font-black text-slate-800 leading-tight">Bonus</span>
-          </div>
-        </button>
-      </section>
+      </div>
 
       {/* Main Action Grid */}
-      <div className="grid grid-cols-1 gap-4 pt-4">
+      <div className="grid grid-cols-1 gap-6 pt-2">
         <button 
           onClick={() => navigate('/ai-assistant')}
-          className="group relative h-44 flex flex-col items-start justify-end p-6 bg-gradient-to-br from-blue-500 to-blue-700 text-white rounded-[40px] shadow-xl shadow-blue-500/20 overflow-hidden bounce-click"
+          className="group relative h-48 flex flex-col items-start justify-end p-8 bg-white border border-slate-200 rounded-[48px] shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden bounce-click"
         >
-          <div className="absolute -top-6 -right-6 w-32 h-32 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
-          <div className="absolute top-6 right-6 p-4 bg-white/20 backdrop-blur-md rounded-3xl">
-            <Bot size={36} strokeWidth={2.5} />
+          <div className="absolute top-0 right-0 w-40 h-40 bg-blue-50 rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform duration-700" />
+          <div className="absolute top-8 right-8 p-5 bg-blue-600 text-white rounded-[32px] shadow-lg shadow-blue-500/30 group-hover:rotate-6 transition-transform">
+            <Bot size={32} strokeWidth={2.5} />
           </div>
-          <span className="text-2xl font-black leading-tight">AI Homework<br/>Assistant</span>
-          <p className="mt-1 text-sm text-blue-100 font-medium opacity-80">Solve your problems instantly</p>
+          <div className="relative z-10">
+            <p className="text-[10px] font-black text-blue-500 uppercase tracking-[0.2em] mb-1">Homework Tool</p>
+            <span className="text-3xl font-black text-slate-900 leading-tight">AI Assistant</span>
+            <p className="mt-2 text-sm text-slate-500 font-medium">Scan & solve problems instantly</p>
+          </div>
         </button>
 
         <button 
           onClick={() => navigate('/word-meaning')}
-          className="group relative h-44 flex flex-col items-start justify-end p-6 bg-gradient-to-br from-purple-500 to-indigo-600 text-white rounded-[40px] shadow-xl shadow-purple-500/20 overflow-hidden bounce-click"
+          className="group relative h-48 flex flex-col items-start justify-end p-8 bg-white border border-slate-200 rounded-[48px] shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden bounce-click"
         >
-          <div className="absolute -top-6 -right-6 w-32 h-32 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
-          <div className="absolute top-6 right-6 p-4 bg-white/20 backdrop-blur-md rounded-3xl">
-            <BookOpenText size={36} strokeWidth={2.5} />
+          <div className="absolute top-0 right-0 w-40 h-40 bg-purple-50 rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform duration-700" />
+          <div className="absolute top-8 right-8 p-5 bg-purple-600 text-white rounded-[32px] shadow-lg shadow-purple-500/30 group-hover:-rotate-6 transition-transform">
+            <BookOpenText size={32} strokeWidth={2.5} />
           </div>
-          <span className="text-2xl font-black leading-tight">Daily Word<br/>Meanings</span>
-          <p className="mt-1 text-sm text-purple-100 font-medium opacity-80">Expand your vocabulary</p>
+          <div className="relative z-10">
+            <p className="text-[10px] font-black text-purple-500 uppercase tracking-[0.2em] mb-1">Vocabulary Builder</p>
+            <span className="text-3xl font-black text-slate-900 leading-tight">Daily Words</span>
+            <p className="mt-2 text-sm text-slate-500 font-medium">Learn 10 new words every day</p>
+          </div>
         </button>
       </div>
 

@@ -17,11 +17,15 @@ import AIAssistant from './components/AIAssistant';
 import WordMeaning from './components/WordMeaning';
 import Leaderboard from './components/Leaderboard';
 import AuthPage from './components/AuthPage';
+import PrivacyPolicy from './components/PrivacyPolicy';
+import AdminDashboard from './components/AdminDashboard';
+import TermsOfService from './components/TermsOfService';
 
 export default function App() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [dataLoaded, setDataLoaded] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [diamonds, setDiamonds] = useState(() => {
     const savedDiamonds = localStorage.getItem('diamonds');
     return savedDiamonds ? parseInt(savedDiamonds, 10) : 0;
@@ -45,14 +49,22 @@ export default function App() {
             if (data.currentDay !== undefined) localStorage.setItem('currentDay', data.currentDay.toString());
             
             // Dispatch storage event so other components update
-            window.dispatchEvent(new Event('storage'));
+            try {
+              window.dispatchEvent(new Event('storage'));
+            } catch (e) {
+              const event = document.createEvent('Event');
+              event.initEvent('storage', true, true);
+              window.dispatchEvent(event);
+            }
           }
         } catch (error) {
           console.error("Error fetching user data:", error);
         }
+        setIsAdmin(currentUser.email === 'shibamyadav56@gmail.com');
         setDataLoaded(true);
       } else {
         setDataLoaded(false);
+        setIsAdmin(false);
       }
       setUser(currentUser);
       setLoading(false);
@@ -91,8 +103,14 @@ export default function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-warm-bg">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50">
+        <div className="relative">
+          <div className="w-20 h-20 border-4 border-slate-200 border-t-primary rounded-full animate-spin"></div>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="text-2xl">🎓</span>
+          </div>
+        </div>
+        <p className="mt-4 font-black text-slate-400 tracking-widest text-xs animate-pulse uppercase">LinguaMaster AI</p>
       </div>
     );
   }
@@ -105,10 +123,13 @@ export default function App() {
           <Route index element={<Home diamonds={diamonds} setDiamonds={setDiamonds} />} />
           <Route path="grammar" element={<Grammar diamonds={diamonds} setDiamonds={setDiamonds} />} />
           <Route path="learning-path" element={<LearningPath setDiamonds={setDiamonds} />} />
-          <Route path="profile" element={<Profile diamonds={diamonds} />} />
+          <Route path="profile" element={<Profile diamonds={diamonds} isAdmin={isAdmin} />} />
           <Route path="ai-assistant" element={<AIAssistant />} />
           <Route path="word-meaning" element={<WordMeaning setDiamonds={setDiamonds} />} />
           <Route path="leaderboard" element={<Leaderboard />} />
+          <Route path="privacy" element={<PrivacyPolicy />} />
+          <Route path="terms" element={<TermsOfService />} />
+          <Route path="admin" element={isAdmin ? <AdminDashboard /> : <Navigate to="/" />} />
         </Route>
       </Routes>
     </Router>

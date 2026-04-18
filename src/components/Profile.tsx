@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { auth, db } from '../lib/firebase';
 import { signOut } from 'firebase/auth';
 import { doc, getDoc, collection, query, orderBy, limit, getDocs, where, getCountFromServer, updateDoc } from 'firebase/firestore';
-import { useNavigate } from 'react-router-dom';
-import { LogOut, User as UserIcon, Trophy, Medal, Pencil, Check, X, ChevronRight } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
+import { LogOut, User as UserIcon, Trophy, Medal, Pencil, Check, X, ChevronRight, ShieldCheck, FileText, Settings } from 'lucide-react';
 import Notification from './Notification';
 
 interface ProfileProps {
   diamonds: number;
+  isAdmin: boolean;
 }
 
 interface LeaderboardUser {
@@ -17,7 +18,7 @@ interface LeaderboardUser {
   displayId: string;
 }
 
-export default function Profile({ diamonds }: ProfileProps) {
+export default function Profile({ diamonds, isAdmin }: ProfileProps) {
   const [name, setName] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState('');
@@ -265,7 +266,7 @@ export default function Profile({ diamonds }: ProfileProps) {
         </div>
 
         {/* Leaderboard */}
-        <div className="mx-6 bg-white rounded-[40px] p-8 shadow-xl shadow-slate-200/50 border border-slate-50">
+        <div className="mx-6 bg-white rounded-[40px] p-8 shadow-xl shadow-slate-200/50 border border-slate-50 mb-8">
           <div className="flex items-center gap-3 mb-8">
             <div className="p-3 bg-amber-100 text-amber-600 rounded-2xl">
               <Medal size={24} strokeWidth={2.5} />
@@ -310,6 +311,58 @@ export default function Profile({ diamonds }: ProfileProps) {
               ))
             )}
           </div>
+        </div>
+
+        {/* App Info & Admin */}
+        <div className="mx-6 space-y-4 mb-20">
+          <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] ml-6">App Info</h3>
+          
+          <div className="bg-white rounded-[40px] p-4 shadow-sm border border-slate-100 flex flex-col gap-2">
+            {isAdmin && (
+              <Link 
+                to="/admin" 
+                className="flex items-center justify-between p-4 rounded-3xl hover:bg-slate-50 transition group"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-amber-100 text-amber-600 rounded-2xl group-hover:scale-110 transition-transform">
+                    <Settings size={20} strokeWidth={2.5} />
+                  </div>
+                  <span className="font-bold text-slate-700">Admin Dashboard</span>
+                </div>
+                <ChevronRight size={18} className="text-slate-300" />
+              </Link>
+            )}
+
+            <Link 
+              to="/privacy" 
+              className="flex items-center justify-between p-4 rounded-3xl hover:bg-slate-50 transition group"
+            >
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-emerald-100 text-emerald-600 rounded-2xl group-hover:scale-110 transition-transform">
+                  <ShieldCheck size={20} strokeWidth={2.5} />
+                </div>
+                <span className="font-bold text-slate-700">Privacy Policy</span>
+              </div>
+              <ChevronRight size={18} className="text-slate-300" />
+            </Link>
+
+            <Link 
+              to="/terms" 
+              className="flex items-center justify-between p-4 rounded-3xl hover:bg-slate-50 transition group"
+            >
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-blue-100 text-blue-600 rounded-2xl group-hover:scale-110 transition-transform">
+                  <FileText size={20} strokeWidth={2.5} />
+                </div>
+                <span className="font-bold text-slate-700">Terms of Service</span>
+              </div>
+              <ChevronRight size={18} className="text-slate-300" />
+            </Link>
+          </div>
+          
+          <p className="text-center text-[10px] font-black text-slate-300 uppercase tracking-widest py-4">
+            LinguaMaster AI v1.0.0
+          </p>
         </div>
       </div>
       <Notification 

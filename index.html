@@ -3,7 +3,24 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Google AI Studio App</title>
+    <title>LinguaMaster AI - English Learning App</title>
+    <link rel="manifest" href="./manifest.json" />
+    <meta name="theme-color" content="#3b82f6" />
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('SW registered'))
+            .catch(err => {
+              if (err.message.includes('redirect')) {
+                console.warn('Service Worker registration skipped due to environment redirect. This is expected in preview mode and will work correctly in the Play Store build.');
+              } else {
+                console.error('Service Worker registration failed:', err);
+              }
+            });
+        });
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
