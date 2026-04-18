@@ -3,7 +3,7 @@ import { auth, db } from '../lib/firebase';
 import { signOut } from 'firebase/auth';
 import { doc, getDoc, collection, query, orderBy, limit, getDocs, where, getCountFromServer, updateDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, User as UserIcon, Trophy, Medal, Pencil, Check, X } from 'lucide-react';
+import { LogOut, User as UserIcon, Trophy, Medal, Pencil, Check, X, ChevronRight } from 'lucide-react';
 import Notification from './Notification';
 
 interface ProfileProps {
@@ -159,13 +159,86 @@ export default function Profile({ diamonds }: ProfileProps) {
   };
 
   return (
-    <div className="min-h-screen bg-warm-bg p-4 md:p-8 pb-24">
+    <div className="bg-slate-50 min-h-screen pb-40">
       <div className="max-w-md mx-auto">
-        <div className="flex justify-between items-start mb-12">
-          <div className="w-20"></div> {/* Spacer to keep title centered */}
-          <h1 className="text-3xl font-bold text-gray-900 text-center tracking-tight mt-4">Your Profile</h1>
+        <header className="pt-10 px-6 mb-8 flex justify-between items-center">
+          <h1 className="text-4xl font-black text-slate-900 tracking-tight leading-none">Profile</h1>
+          <button 
+            onClick={handleLogout}
+            className="p-3 bg-red-100/50 text-red-600 rounded-2xl hover:bg-red-100 transition active:scale-90"
+          >
+            <LogOut size={24} />
+          </button>
+        </header>
 
-          {/* Ad Button Placeholder */}
+        {/* Profile Card */}
+        <div className="mx-6 bg-white rounded-[40px] shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden relative mb-8 group">
+          <div className="h-32 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 relative overflow-hidden">
+             <div className="absolute top-0 left-0 w-full h-full opacity-20 bg-[radial-gradient(circle_at_50%_120%,rgba(255,255,255,0.5),transparent)]" />
+          </div>
+          
+          <div className="px-6 pb-10 relative">
+            {/* Avatar */}
+            <div className="absolute -top-16 left-1/2 -translate-x-1/2">
+              <div className="w-32 h-32 bg-white rounded-3xl shadow-xl p-2 rotate-3 group-hover:rotate-0 transition-transform duration-500">
+                <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl flex items-center justify-center shadow-inner">
+                  <span className="text-5xl font-black text-white">{firstLetter}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-20 text-center">
+              <div className="flex items-center justify-center gap-2 mb-1 group/name">
+                {isEditing ? (
+                  <div className="flex items-center gap-2 bg-slate-50 p-1 px-3 rounded-2xl border border-slate-200">
+                    <input
+                      type="text"
+                      value={editName}
+                      onChange={(e) => setEditName(e.target.value)}
+                      className="text-xl font-bold bg-transparent outline-none w-40 text-center"
+                      autoFocus
+                    />
+                    <button onClick={handleUpdateName} className="p-2 text-green-600"><Check size={20}/></button>
+                  </div>
+                ) : (
+                  <>
+                    <h2 className="text-2xl font-black text-slate-900">{name}</h2>
+                    <button onClick={startEditing} className="p-2 text-slate-300 hover:text-primary transition opacity-0 group-hover/name:opacity-100">
+                      <Pencil size={18} />
+                    </button>
+                  </>
+                )}
+              </div>
+              <p className="text-sm font-medium text-slate-400 mb-6">{user.email}</p>
+              
+              <div className="flex items-center justify-center gap-1.5 p-2 px-4 bg-slate-50 rounded-2xl border border-slate-100 mb-8 w-fit mx-auto">
+                <span className="text-[10px] font-black text-slate-400 tracking-tighter uppercase">Player ID</span>
+                <span className="text-xs font-mono font-bold text-slate-600">{displayId}</span>
+              </div>
+
+              {/* Quick Stats */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-blue-50/50 p-6 rounded-3xl border border-blue-100 flex flex-col items-center">
+                  <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm mb-3">
+                    <span className="text-2xl">💎</span>
+                  </div>
+                  <span className="text-2xl font-black text-blue-900">{diamonds}</span>
+                  <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest mt-1">Diamonds</span>
+                </div>
+                <div className="bg-amber-50/50 p-6 rounded-3xl border border-amber-100 flex flex-col items-center">
+                  <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm mb-3 text-amber-500">
+                    <Trophy size={28} strokeWidth={2.5} />
+                  </div>
+                  <span className="text-2xl font-black text-amber-900">{getOrdinalSuffix(userRank)}</span>
+                  <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest mt-1">Global Rank</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Watch Ad Bonus */}
+        <div className="mx-6 mb-8">
           <button 
             onClick={() => setNotification({
               isOpen: true,
@@ -173,150 +246,65 @@ export default function Profile({ diamonds }: ProfileProps) {
               type: 'info',
               title: 'Coming Soon'
             })}
-            className="w-20 h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl shadow-md flex flex-col items-center justify-center text-white font-black transition-transform hover:scale-105 active:scale-95 border-2 border-yellow-200 shrink-0"
+            className="w-full bg-slate-900 text-white p-6 rounded-[32px] flex items-center justify-between shadow-xl shadow-slate-900/20 active:scale-95 transition overflow-hidden relative"
           >
-            <span className="text-2xl mb-1">📺</span>
-            <span className="text-center text-[10px] leading-tight">Watch Ad<br/>+2 💎</span>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full blur-3xl" />
+            <div className="flex items-center gap-4 relative z-10">
+              <div className="w-14 h-14 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center">
+                <span className="text-3xl">📺</span>
+              </div>
+              <div className="text-left">
+                <p className="font-black text-lg">Watch & Earn</p>
+                <p className="text-xs text-slate-400">Instant +2 Diamonds bonus</p>
+              </div>
+            </div>
+            <div className="bg-primary text-white p-3 rounded-2xl shadow-lg relative z-10">
+              <ChevronRight size={24} strokeWidth={3} />
+            </div>
           </button>
         </div>
 
-        {/* Profile Card */}
-        <div className="bg-white rounded-3xl shadow-xl overflow-visible border border-gray-100 relative mb-12">
-          {/* Top Gradient Background */}
-          <div className="h-24 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 rounded-t-3xl"></div>
-          
-          <div className="px-6 pb-8 relative">
-            {/* Avatar Square */}
-            <div className="absolute -top-16 left-1/2 transform -translate-x-1/2">
-              <div className="w-32 h-32 bg-white rounded-2xl shadow-lg p-2 flex items-center justify-center rotate-3 hover:rotate-0 transition-transform duration-300">
-                <div className="w-full h-full bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-inner">
-                  <span className="text-5xl font-black text-white drop-shadow-md">
-                    {firstLetter}
-                  </span>
-                </div>
-              </div>
+        {/* Leaderboard */}
+        <div className="mx-6 bg-white rounded-[40px] p-8 shadow-xl shadow-slate-200/50 border border-slate-50">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="p-3 bg-amber-100 text-amber-600 rounded-2xl">
+              <Medal size={24} strokeWidth={2.5} />
             </div>
-
-            {/* User Info */}
-            <div className="pt-20 text-center">
-              <div className="flex items-center justify-center gap-2 mb-1 group">
-                {isEditing ? (
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="text"
-                      value={editName}
-                      onChange={(e) => setEditName(e.target.value)}
-                      className="text-2xl font-bold text-gray-900 border-b-2 border-primary outline-none bg-transparent text-center w-full max-w-[200px]"
-                      autoFocus
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') handleUpdateName();
-                        if (e.key === 'Escape') setIsEditing(false);
-                      }}
-                    />
-                    <button 
-                      onClick={handleUpdateName}
-                      disabled={isUpdating}
-                      className="p-1 text-green-600 hover:bg-green-50 rounded-full transition-colors"
-                    >
-                      <Check size={20} />
-                    </button>
-                    <button 
-                      onClick={() => setIsEditing(false)}
-                      className="p-1 text-red-600 hover:bg-red-50 rounded-full transition-colors"
-                    >
-                      <X size={20} />
-                    </button>
-                  </div>
-                ) : (
-                  <>
-                    <h2 className="text-2xl font-bold text-gray-900">{name}</h2>
-                    <button 
-                      onClick={startEditing}
-                      className="p-1 text-gray-400 hover:text-primary transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
-                      title="Edit Name"
-                    >
-                      <Pencil size={16} />
-                    </button>
-                  </>
-                )}
-              </div>
-              <p className="text-gray-500 text-sm mb-4">{user.email}</p>
-              <div className="inline-flex items-center justify-center bg-gray-100 px-4 py-2 rounded-xl mb-8">
-                <span className="text-xs text-gray-500 uppercase font-bold mr-2">ID</span>
-                <span className="text-sm text-gray-800 font-mono font-medium tracking-wider">{displayId}</span>
-              </div>
-
-              {/* Stats Grid */}
-              <div className="grid grid-cols-2 gap-4 mb-8">
-                <div className="bg-blue-50 rounded-2xl p-4 border border-blue-100 flex flex-col items-center justify-center transition-transform hover:scale-105">
-                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-3 text-2xl">
-                    💎
-                  </div>
-                  <span className="text-2xl font-bold text-blue-900">{diamonds}</span>
-                  <span className="text-xs font-bold text-blue-600 uppercase tracking-wider mt-1">Diamonds</span>
-                </div>
-                <div className="bg-purple-50 rounded-2xl p-4 border border-purple-100 flex flex-col items-center justify-center transition-transform hover:scale-105">
-                  <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-3 text-purple-600">
-                    <Trophy size={24} />
-                  </div>
-                  <span className="text-2xl font-bold text-purple-900">{getOrdinalSuffix(userRank)}</span>
-                  <span className="text-xs font-bold text-purple-600 uppercase tracking-wider mt-1">Global Rank</span>
-                </div>
-              </div>
-
-              {/* Actions */}
-              <button 
-                onClick={handleLogout}
-                className="w-full flex items-center justify-center gap-2 bg-red-50 hover:bg-red-100 text-red-600 p-4 rounded-2xl font-bold transition-colors border border-red-100"
-              >
-                <LogOut size={20} />
-                Sign Out
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Leaderboard Section */}
-        <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-3 bg-yellow-100 text-yellow-600 rounded-xl">
-              <Trophy size={24} />
-            </div>
-            <h2 className="text-2xl font-bold text-gray-900">Leaderboard</h2>
+            <h2 className="text-2xl font-black text-slate-900">Leaderboard</h2>
           </div>
 
           <div className="space-y-4">
             {leaderboard.length === 0 ? (
-              <p className="text-center text-gray-500 py-4">No data available yet.</p>
+              <p className="text-center text-slate-300 py-10 font-bold">No data yet...</p>
             ) : (
               leaderboard.map((lbUser, index) => (
                 <div 
                   key={lbUser.id} 
-                  className={`flex items-center justify-between p-4 rounded-2xl border ${
+                  className={`flex items-center justify-between p-4 rounded-3xl transition-colors ${
                     lbUser.id === user?.uid 
-                      ? 'bg-blue-50 border-blue-200' 
-                      : 'bg-gray-50 border-gray-100'
+                      ? 'bg-blue-50 ring-2 ring-blue-100' 
+                      : 'bg-slate-50 hover:bg-slate-100'
                   }`}
                 >
                   <div className="flex items-center gap-4">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
-                      index === 0 ? 'bg-yellow-400 text-yellow-900' :
-                      index === 1 ? 'bg-gray-300 text-gray-800' :
-                      index === 2 ? 'bg-amber-600 text-white' :
-                      'bg-gray-200 text-gray-600'
+                    <div className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black ${
+                      index === 0 ? 'bg-amber-400 text-white shadow-lg shadow-amber-400/30' :
+                      index === 1 ? 'bg-slate-300 text-white shadow-lg shadow-slate-300/30' :
+                      index === 2 ? 'bg-orange-400 text-white shadow-lg shadow-orange-400/30' :
+                      'text-slate-400'
                     }`}>
-                      {index < 3 ? <Medal size={16} /> : index + 1}
+                      {index + 1}
                     </div>
                     <div>
-                      <p className="font-bold text-gray-900">
-                        {lbUser.name} {lbUser.id === user?.uid && <span className="text-xs text-blue-600 ml-1">(You)</span>}
+                      <p className="font-bold text-slate-900 leading-none">
+                        {lbUser.name}
                       </p>
-                      <p className="text-xs text-gray-500 font-mono">{lbUser.displayId}</p>
+                      <p className="text-[10px] text-slate-400 font-mono mt-1 uppercase tracking-tight">{lbUser.displayId}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1 bg-white px-3 py-1.5 rounded-lg shadow-sm border border-gray-100">
+                  <div className="flex items-center gap-1.5 bg-white p-2 px-3 rounded-2xl shadow-sm border border-slate-100">
                     <span className="text-lg leading-none">💎</span>
-                    <span className="font-bold text-gray-900">{lbUser.diamonds}</span>
+                    <span className="font-black text-slate-900">{lbUser.diamonds}</span>
                   </div>
                 </div>
               ))

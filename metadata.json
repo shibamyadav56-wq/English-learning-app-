@@ -1,6 +1,8 @@
 {
-  "name": "",
-  "description": "",
-  "requestFramePermissions": [],
+  "name": "Smart Learner",
+  "description": "An interactive English learning app with AI homework assistant, daily vocabulary, and grammar lessons.",
+  "requestFramePermissions": [
+    "camera"
+  ],
   "majorCapabilities": []
 }

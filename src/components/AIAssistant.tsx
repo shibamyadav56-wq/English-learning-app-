@@ -120,38 +120,53 @@ export default function AIAssistant() {
   };
 
   return (
-    <div className="flex flex-col h-screen p-4 bg-warm-bg pb-24">
-      <h1 className="text-2xl font-bold mb-4 text-center font-display text-gray-900">AI Homework Assistant</h1>
-      <div className="flex-grow overflow-y-auto mb-4 space-y-4">
+    <div className="flex flex-col h-[calc(100vh-140px)] p-4">
+      <div className="flex-grow overflow-y-auto mb-4 space-y-4 px-2 scrollbar-hide">
+        {messages.length === 0 && (
+          <div className="flex flex-col items-center justify-center h-full text-center opacity-40 py-10">
+            <Bot size={80} strokeWidth={1} className="mb-4" />
+            <p className="font-bold text-lg">Main apki kaise madad kar sakta hoon?</p>
+            <p className="text-sm">Homework ka photo bhejein ya sawaal puchein</p>
+          </div>
+        )}
         {messages.map((msg, i) => (
-          <div key={i} className={`flex items-start gap-2 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
-            <div className={`p-2 rounded-full shrink-0 ${msg.role === 'user' ? 'bg-primary' : 'bg-gray-300'}`}>
-              {msg.role === 'user' ? <User size={20} className="text-white"/> : <Bot size={20} className="text-gray-700"/>}
+          <div key={i} className={`flex items-start gap-4 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
+            <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 shadow-sm ${msg.role === 'user' ? 'bg-primary text-white' : 'bg-white text-slate-600'}`}>
+              {msg.role === 'user' ? <User size={20}/> : <Bot size={20}/>}
             </div>
-            <div className={`p-3 rounded-2xl max-w-[80%] ${msg.role === 'user' ? 'bg-blue-100 text-blue-900' : 'bg-white text-gray-900 shadow-sm'}`}>
+            <div className={`p-4 rounded-3xl max-w-[85%] ${msg.role === 'user' ? 'bg-primary text-white shadow-lg shadow-blue-500/10' : 'bg-white text-slate-900 shadow-sm border border-slate-100'}`}>
               {msg.imageUrl && (
-                <img src={msg.imageUrl} alt="Uploaded" className="max-w-full rounded-xl mb-2 max-h-48 object-contain" />
+                <img src={msg.imageUrl} alt="Uploaded" className="max-w-full rounded-2xl mb-3 max-h-60 object-contain shadow-sm" />
               )}
-              {msg.text && <div className="whitespace-pre-wrap">{msg.text}</div>}
+              {msg.text && <div className="whitespace-pre-wrap text-[15px] leading-relaxed font-medium">{msg.text}</div>}
             </div>
           </div>
         ))}
-        {loading && <div className="p-3 bg-white self-start rounded-2xl shadow-sm">Thinking...</div>}
+        {loading && (
+          <div className="flex items-center gap-2 p-4 bg-white self-start rounded-3xl shadow-sm border border-slate-100 italic text-slate-400">
+            <div className="flex gap-1">
+              <div className="w-1.5 h-1.5 bg-slate-300 rounded-full animate-bounce [animation-delay:-0.3s]" />
+              <div className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce [animation-delay:-0.15s]" />
+              <div className="w-1.5 h-1.5 bg-slate-500 rounded-full animate-bounce" />
+            </div>
+            Thinking...
+          </div>
+        )}
       </div>
       
-      <div className="bg-white p-2 rounded-3xl shadow-md border border-gray-100 mb-20">
+      <div className="bg-white/90 backdrop-blur-md p-3 rounded-[32px] shadow-2xl border border-white sticky bottom-0 nav-shadow">
         {image && (
-          <div className="relative inline-block mb-2 ml-2">
-            <img src={image.preview} alt="Preview" className="h-20 w-20 object-cover rounded-xl border-2 border-blue-200" />
+          <div className="relative inline-block mb-3 ml-2 group">
+            <img src={image.preview} alt="Preview" className="h-24 w-24 object-cover rounded-2xl border-4 border-blue-100 shadow-lg" />
             <button 
               onClick={removeImage}
-              className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-md hover:bg-red-600"
+              className="absolute -top-3 -right-3 bg-red-500 text-white rounded-full p-2 shadow-xl hover:bg-red-600 active:scale-90 transition"
             >
-              <X size={14} />
+              <X size={16} />
             </button>
           </div>
         )}
-        <div className="flex items-end gap-2">
+        <div className="flex items-end gap-3">
           <input 
             type="file" 
             accept="image/*" 
@@ -162,28 +177,30 @@ export default function AIAssistant() {
           />
           <button 
             onClick={() => fileInputRef.current?.click()}
-            className="p-3 bg-blue-50 text-primary rounded-full hover:bg-blue-100 transition shrink-0 mb-1 ml-1"
+            className="p-4 bg-slate-100 text-slate-600 rounded-2xl hover:bg-slate-200 transition shrink-0 active:scale-90"
             title="Upload Photo or Take Picture"
           >
-            <Plus size={24} />
+            <ImageIcon size={24} />
           </button>
-          <textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            className="flex-grow p-3 outline-none resize-none max-h-32 min-h-[50px] bg-transparent"
-            placeholder="Ask your question or upload a photo..."
-            rows={input.split('\n').length > 1 ? Math.min(input.split('\n').length, 4) : 1}
-          />
+          <div className="flex-grow relative bg-slate-50 rounded-2xl border border-slate-100 focus-within:border-primary transition-colors">
+            <textarea
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              className="w-full p-4 outline-none resize-none max-h-40 min-h-[56px] bg-transparent text-[15px] font-medium"
+              placeholder="Kuch bhi puchein..."
+              rows={input.split('\n').length > 1 ? Math.min(input.split('\n').length, 5) : 1}
+            />
+          </div>
           <button 
             onClick={handleAsk} 
-            className={`p-4 rounded-full shrink-0 mb-1 mr-1 transition ${
+            className={`p-4 rounded-2xl shrink-0 transition-all duration-300 ${
               (input.trim() || image) && !loading 
-                ? 'bg-primary text-white hover:bg-blue-700 shadow-md' 
-                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                ? 'bg-primary text-white shadow-xl shadow-blue-500/30 scale-100 active:scale-90' 
+                : 'bg-slate-100 text-slate-300 scale-95 cursor-not-allowed'
             }`} 
             disabled={loading || (!input.trim() && !image)}
           >
-            <Send size={20} />
+            <Send size={24} strokeWidth={2.5} />
           </button>
         </div>
       </div>

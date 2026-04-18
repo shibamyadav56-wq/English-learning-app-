@@ -96,76 +96,131 @@ export default function Rewards({ onClose, onClaim }: { onClose: () => void, onC
     const isClaimable = usageTime >= secondsNeeded;
     
     return (
-      <div className="bg-white p-4 rounded-2xl border-2 border-blue-100 shadow-sm">
-        <div className="flex justify-between items-center mb-2">
-          <span className="font-bold text-blue-900">{minutes} min Reward</span>
-          <span className="text-blue-600 font-bold flex items-center gap-1">
+      <div className="bg-slate-50 p-4 rounded-3xl border border-slate-100 shadow-sm relative overflow-hidden">
+        <div className="flex justify-between items-center mb-3">
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 bg-blue-100 text-blue-600 rounded-lg">
+               <Clock size={14} strokeWidth={3} />
+            </div>
+            <span className="font-black text-slate-800 text-sm">{minutes} Min Reward</span>
+          </div>
+          <span className="text-blue-600 font-extrabold flex items-center gap-1 text-sm bg-white p-1 px-3 rounded-xl border border-blue-50 shadow-sm">
             +{minutes === 10 ? 5 : minutes === 20 ? 15 : 50} 
-            <span className="text-lg leading-none">💎</span>
+            <span className="leading-none">💎</span>
           </span>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-3 mb-3">
-          <div className="bg-blue-500 h-3 rounded-full transition-all duration-500" style={{ width: `${progress}%` }}></div>
+        <div className="w-full bg-slate-200 rounded-full h-2 mb-4 overflow-hidden">
+          <div className="bg-primary h-full rounded-full transition-all duration-700 ease-out shadow-[0_0_10px_rgba(59,130,246,0.5)]" style={{ width: `${progress}%` }}></div>
         </div>
         <button 
           onClick={() => claimTimeReward(minutes, minutes === 10 ? 5 : minutes === 20 ? 15 : 50)} 
           disabled={!isClaimable}
-          className={`w-full p-2 rounded-xl font-bold transition ${isClaimable ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
+          className={`w-full py-3 rounded-2xl font-black text-sm transition-all bounce-click ${
+            isClaimable 
+              ? 'bg-primary text-white shadow-lg shadow-blue-500/20' 
+              : 'bg-slate-200 text-slate-400 cursor-not-allowed grayscale'
+          }`}
         >
-          {isClaimable ? 'Claim' : 'In Progress'}
+          {isClaimable ? 'CLAIM NOW' : 'KEEP LEARNING'}
         </button>
       </div>
     );
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-      <div className="bg-white p-6 rounded-3xl w-full max-w-md shadow-2xl">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">Rewards</h2>
-          <button onClick={onClose} className="p-2 bg-gray-100 rounded-full"><X size={20} /></button>
-        </div>
-
-        <div className="flex gap-2 mb-6 bg-gray-100 p-1 rounded-2xl">
-          <button onClick={() => setActiveTab('daily')} className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-xl font-bold ${activeTab === 'daily' ? 'bg-white shadow' : ''}`}><Gift size={18}/> Daily</button>
-          <button onClick={() => setActiveTab('time')} className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-xl font-bold ${activeTab === 'time' ? 'bg-white shadow' : ''}`}><Clock size={18}/> Time</button>
-        </div>
-
-        {activeTab === 'daily' ? (
-          <div className="grid grid-cols-5 gap-3">
-            {Array.from({ length: 30 }).map((_, i) => {
-              const d = i + 1;
-              const isClaimed = d < day;
-              const isAvailable = d === day;
-              return (
-                <div key={d} className={`aspect-square flex flex-col items-center justify-center border-2 rounded-2xl font-bold text-xs p-1 ${isClaimed ? 'bg-green-100 border-green-300 text-green-800' : isAvailable ? 'bg-yellow-100 border-yellow-400 text-yellow-900' : 'bg-gray-100 border-gray-200 text-gray-400'}`}>
-                  <span>Day {d}</span>
-                  <span className="text-[10px] flex items-center gap-0.5">{d * 5} <span className="leading-none">💎</span></span>
-                  {isAvailable && (
-                    <button onClick={() => handleClaimDaily(d)} className="mt-1 bg-yellow-500 text-white text-[10px] px-2 py-1 rounded-lg">Claim</button>
-                  )}
-                </div>
-              );
-            })}
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+      <div className="bg-white rounded-[40px] w-full max-w-sm shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+        <div className="p-6 pb-0 flex justify-between items-center mb-4">
+          <div className="flex items-center gap-3">
+             <div className="p-2 bg-amber-100 text-amber-600 rounded-xl">
+               <Gift size={24} strokeWidth={2.5} />
+             </div>
+             <h2 className="text-2xl font-black text-slate-900 tracking-tight">Rewards</h2>
           </div>
-        ) : (
-          <div className="space-y-4">
-            <div className="flex items-center justify-center gap-4 mb-6 bg-gradient-to-br from-blue-500 to-indigo-600 p-6 rounded-3xl text-white shadow-xl">
-              <Clock size={48} className="text-white opacity-80" />
-              <div>
-                <p className="text-sm opacity-80">Total Time Spent</p>
-                <p className="text-4xl font-black">
-                  {Math.floor(usageTime / 60).toString().padStart(2, '0')}:
-                  {(usageTime % 60).toString().padStart(2, '0')}
-                  <span className="text-xl font-normal opacity-70"> mins</span>
-                </p>
+          <button onClick={onClose} className="p-3 bg-slate-100 text-slate-400 rounded-2xl active:scale-90 transition"><X size={24} /></button>
+        </div>
+
+        <div className="px-6 mb-4">
+          <div className="flex gap-2 bg-slate-50 p-1.5 rounded-[22px] border border-slate-100">
+            <button 
+              onClick={() => setActiveTab('daily')} 
+              className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-[18px] font-black text-sm transition-all ${activeTab === 'daily' ? 'bg-white shadow-sm text-primary' : 'text-slate-400'}`}
+            >
+              <Gift size={18}/> Daily
+            </button>
+            <button 
+              onClick={() => setActiveTab('time')} 
+              className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-[18px] font-black text-sm transition-all ${activeTab === 'time' ? 'bg-white shadow-sm text-primary' : 'text-slate-400'}`}
+            >
+              <Clock size={18}/> Time
+            </button>
+          </div>
+        </div>
+
+        <div className="flex-grow overflow-y-auto px-6 pb-8 scrollbar-hide">
+          {activeTab === 'daily' ? (
+            <div className="grid grid-cols-4 gap-2">
+              {Array.from({ length: 30 }).map((_, i) => {
+                const d = i + 1;
+                const isClaimed = d < day;
+                const isAvailable = d === day;
+                return (
+                  <div 
+                    key={d} 
+                    className={`aspect-square flex flex-col items-center justify-center rounded-2xl transition-all relative ${
+                      isClaimed ? 'bg-emerald-50 text-emerald-600' : 
+                      isAvailable ? 'bg-amber-100 text-amber-800 ring-4 ring-amber-100' : 
+                      'bg-slate-50 text-slate-300'
+                    }`}
+                  >
+                    <span className="text-[10px] font-black opacity-60">Day {d}</span>
+                    <div className="flex items-center gap-0.5 mt-0.5">
+                       <span className="font-black text-xs">{d * 5}</span>
+                       <span className="text-xs">💎</span>
+                    </div>
+                    {isAvailable && (
+                      <button 
+                        onClick={() => handleClaimDaily(d)} 
+                        className="absolute inset-0 w-full h-full bg-amber-500 text-white rounded-2xl font-black text-[10px] animate-pulse shadow-lg shadow-amber-500/20"
+                      >
+                        CLAIM
+                      </button>
+                    )}
+                    {isClaimed && (
+                       <div className="absolute -top-1 -right-1 bg-emerald-500 text-white rounded-full p-0.5 shadow-sm">
+                         <X size={10} className="rotate-45" strokeWidth={4} />
+                       </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="relative overflow-hidden bg-slate-900 p-6 rounded-[32px] text-white shadow-xl mb-6">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full blur-3xl" />
+                <div className="flex items-center gap-4 relative z-10">
+                  <div className="p-3 bg-white/10 rounded-2xl">
+                    <Clock size={32} className="text-blue-400" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Active Time</p>
+                    <p className="text-3xl font-black tabular-nums tracking-tight">
+                      {Math.floor(usageTime / 60).toString().padStart(2, '0')}:
+                      {(usageTime % 60).toString().padStart(2, '0')}
+                      <span className="text-sm font-bold opacity-40 ml-1">MINS</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-3">
+                {renderProgressBar(10)}
+                {renderProgressBar(20)}
+                {renderProgressBar(60)}
               </div>
             </div>
-            {renderProgressBar(10)}
-            {renderProgressBar(20)}
-            {renderProgressBar(60)}
-          </div>
-        )}
+          )}
+        </div>
       </div>
       <Notification 
         isOpen={notification.isOpen}

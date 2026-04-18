@@ -48,19 +48,22 @@ export default function WordMeaning({ setDiamonds }: { setDiamonds: (d: number |
   };
 
   return (
-    <div className="p-4 bg-warm-bg min-h-screen pb-20">
-      <h1 className="text-3xl font-bold mb-6 text-center font-display text-gray-900">Word Meaning</h1>
+    <div className="bg-orange-50/30 min-h-screen pb-40">
+      <div className="pt-8 px-6 mb-4">
+        <h1 className="text-4xl font-black text-orange-900 tracking-tight leading-none">Vocabulary</h1>
+        <p className="text-orange-600 font-bold mt-2 opacity-80 uppercase tracking-widest text-[10px]">Learn 1000+ Words</p>
+      </div>
       
       {/* Level Tabs */}
-      <div className="flex gap-2 overflow-x-auto mb-6 pb-2 scrollbar-hide">
+      <div className="flex gap-2 overflow-x-auto px-6 py-4 scrollbar-hide">
         {Array.from({ length: totalLevels }).map((_, i) => (
           <button
             key={i}
             onClick={() => setCurrentLevel(i + 1)}
-            className={`px-6 py-2 rounded-full font-bold whitespace-nowrap transition-all ${
+            className={`px-6 py-3 rounded-2xl font-black whitespace-nowrap transition-all bounce-click ${
               currentLevel === i + 1
-                ? 'bg-primary text-white shadow-md'
-                : 'bg-white text-gray-500 border border-gray-100'
+                ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/30'
+                : 'bg-white text-slate-400 border border-slate-100 font-bold'
             }`}
           >
             Level {i + 1}
@@ -68,18 +71,23 @@ export default function WordMeaning({ setDiamonds }: { setDiamonds: (d: number |
         ))}
       </div>
 
-      <button 
-        onClick={() => setShowQuiz(true)}
-        className="w-full bg-green-600 text-white p-4 rounded-2xl font-bold mb-6 shadow-lg hover:bg-green-700 transition flex justify-between items-center"
-      >
-        <div className="flex flex-col items-start">
-          <span>Vocabulary Quiz</span>
-          <span className="text-xs font-normal opacity-80">Unlock 10 more words</span>
-        </div>
-        <ChevronRight />
-      </button>
+      <div className="px-6 mb-8">
+        <button 
+          onClick={() => setShowQuiz(true)}
+          className="w-full bg-slate-900 text-white p-6 rounded-[32px] font-bold shadow-xl shadow-slate-900/20 hover:bg-slate-800 transition flex justify-between items-center bounce-click group relative overflow-hidden"
+        >
+          <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl" />
+          <div className="flex flex-col items-start relative z-10">
+            <span className="text-xl font-black">Vocabulary Quiz</span>
+            <span className="text-xs font-medium opacity-60">Unlock next 10 words</span>
+          </div>
+          <div className="bg-white/10 p-2 rounded-xl relative z-10 transition-transform group-hover:translate-x-1">
+             <ChevronRight size={24} strokeWidth={3} />
+          </div>
+        </button>
+      </div>
       
-      <div className="space-y-4">
+      <div className="px-6 space-y-4">
         {levelWords.map((word, index) => {
           const absoluteIndex = (currentLevel - 1) * 100 + index;
           const isUnlocked = absoluteIndex < unlockedWords;
@@ -87,32 +95,28 @@ export default function WordMeaning({ setDiamonds }: { setDiamonds: (d: number |
           return (
             <div 
               key={absoluteIndex} 
-              className={`relative overflow-hidden p-4 rounded-2xl shadow-sm transition-all duration-500 ${
+              className={`relative overflow-hidden p-6 rounded-[32px] transition-all duration-500 ${
                 isUnlocked 
-                  ? 'bg-white border border-gray-100' 
-                  : 'bg-white/50 border border-gray-50'
+                  ? 'bg-white border border-slate-100 shadow-sm' 
+                  : 'bg-slate-100/50 border border-slate-200/50 border-dashed'
               }`}
             >
               {isUnlocked ? (
                 <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-                  <p className="font-bold text-lg text-gray-900">{word.english} - {word.hindi}</p>
-                  <p className="text-gray-600 italic">{word.example}</p>
-                  <p className="text-gray-500 text-sm">{word.exampleHindi}</p>
+                  <div className="flex justify-between items-start mb-2">
+                     <p className="font-black text-2xl text-slate-900 tracking-tight">{word.english}</p>
+                     <span className="text-[10px] font-black bg-slate-100 text-slate-400 p-1 px-2 rounded-lg">#{absoluteIndex + 1}</span>
+                  </div>
+                  <p className="text-xl font-bold text-orange-600 mb-3">{word.hindi}</p>
+                  <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 border-l-4 border-l-primary">
+                    <p className="text-slate-600 font-medium italic text-sm">"{word.example}"</p>
+                    <p className="text-slate-400 text-xs mt-1 font-bold">{word.exampleHindi}</p>
+                  </div>
                 </div>
               ) : (
-                <div className="h-16 flex items-center justify-center">
-                  <div className="absolute inset-0 bg-white/90 backdrop-blur-md flex items-center justify-center">
-                    <div className="flex gap-1 opacity-20">
-                      {[1, 2, 3].map((n) => (
-                        <div 
-                          key={n} 
-                          className="w-8 h-8 bg-gray-400 rounded-full blur-md animate-pulse" 
-                          style={{ animationDelay: `${n * 0.2}s` }}
-                        />
-                      ))}
-                    </div>
-                    <span className="absolute font-bold text-gray-400 tracking-widest uppercase text-xs">Locked</span>
-                  </div>
+                <div className="h-20 flex items-center justify-center">
+                   <Lock className="text-slate-300" size={32} />
+                   <span className="ml-3 font-black text-slate-300 uppercase tracking-widest text-xs">Locked</span>
                 </div>
               )}
             </div>

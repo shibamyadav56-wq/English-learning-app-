@@ -80,37 +80,40 @@ export default function Grammar({ diamonds, setDiamonds }: { diamonds: number, s
     if (showResult) {
       const isPerfect = score === selectedTopic.quiz.length;
       return (
-        <div className="p-4 bg-warm-bg min-h-screen flex flex-col items-center justify-center text-center pb-24">
-          <Trophy size={80} className={`mb-6 ${isPerfect ? 'text-yellow-500' : 'text-gray-400'}`} />
-          <h2 className="text-3xl font-bold mb-4">Quiz Completed!</h2>
-          <p className="text-xl mb-6">Your Score: {score} / {selectedTopic.quiz.length}</p>
+        <div className="flex flex-col items-center justify-center text-center p-8 bg-white min-h-[calc(100vh-80px)]">
+          <div className={`p-8 rounded-[40px] mb-8 ${isPerfect ? 'bg-amber-50 text-amber-500 shadow-xl shadow-amber-500/10' : 'bg-slate-50 text-slate-400'}`}>
+            <Trophy size={100} strokeWidth={2.5} className={isPerfect ? 'animate-bounce' : ''} />
+          </div>
+          <h2 className="text-4xl font-black text-slate-900 tracking-tight mb-2">Quiz Completed!</h2>
+          <p className="text-xl font-bold text-slate-400 mb-10">Your Score: <span className="text-primary">{score}</span> / {selectedTopic.quiz.length}</p>
           
           {isPerfect ? (
             earnedNow ? (
-              <div className="bg-green-100 border border-green-300 p-6 rounded-2xl mb-8 animate-bounce">
-                <p className="text-green-800 font-bold text-xl flex items-center justify-center gap-2">
-                  <span className="text-2xl leading-none">💎</span> +10 Diamonds Earned!
+              <div className="bg-emerald-500 text-white p-8 rounded-[40px] mb-10 shadow-xl shadow-emerald-500/30 w-full max-w-sm relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full blur-2xl" />
+                <p className="text-2xl font-black flex items-center justify-center gap-3">
+                  <span className="text-3xl">💎</span> +10 Diamonds
                 </p>
-                <p className="text-green-700 mt-2">Excellent job! You mastered this topic.</p>
+                <p className="text-emerald-100 font-bold mt-2 text-sm">Excellent job! Topic mastered.</p>
               </div>
             ) : (
-              <div className="bg-blue-100 border border-blue-300 p-6 rounded-2xl mb-8">
-                <p className="text-blue-800 font-bold text-xl flex items-center justify-center gap-2">
-                  <CheckCircle2 size={28} className="text-blue-600" /> Perfect Score!
+              <div className="bg-blue-500 text-white p-8 rounded-[40px] mb-10 shadow-xl shadow-blue-500/30 w-full max-w-sm">
+                <p className="text-2xl font-black flex items-center justify-center gap-3">
+                  <CheckCircle2 size={32} strokeWidth={3} /> Perfect!
                 </p>
-                <p className="text-blue-700 mt-2">You have already claimed diamonds for this topic.</p>
+                <p className="text-blue-100 font-bold mt-2 text-sm opacity-80">Already claimed reward.</p>
               </div>
             )
           ) : (
-            <div className="bg-orange-100 border border-orange-300 p-6 rounded-2xl mb-8">
-              <p className="text-orange-800 font-bold text-lg">Good try!</p>
-              <p className="text-orange-700 mt-2">Get all questions right to earn 10 diamonds. Review the notes and try again!</p>
+            <div className="bg-orange-500 text-white p-8 rounded-[40px] mb-10 shadow-xl shadow-orange-500/30 w-full max-w-sm">
+              <p className="text-xl font-black">Keep going!</p>
+              <p className="text-orange-100 font-bold mt-2 text-sm opacity-80">Get all correct for 10 diamonds.</p>
             </div>
           )}
 
-          <div className="flex gap-4 w-full max-w-md">
-            <button onClick={startQuiz} className="flex-1 bg-blue-100 text-blue-700 p-4 rounded-2xl font-bold hover:bg-blue-200 transition">Try Again</button>
-            <button onClick={backToList} className="flex-1 bg-primary text-white p-4 rounded-2xl font-bold hover:bg-blue-700 transition">Back to Topics</button>
+          <div className="flex flex-col gap-4 w-full max-w-xs">
+            <button onClick={startQuiz} className="bg-slate-900 text-white p-5 rounded-[24px] font-black text-lg shadow-xl shadow-slate-900/20 bounce-click">Try Again</button>
+            <button onClick={backToList} className="bg-slate-100 text-slate-600 p-5 rounded-[24px] font-black text-lg bounce-click">Back to Topics</button>
           </div>
         </div>
       );
@@ -119,31 +122,43 @@ export default function Grammar({ diamonds, setDiamonds }: { diamonds: number, s
     if (quizMode) {
       const question = selectedTopic.quiz[currentQuestionIndex];
       return (
-        <div className="p-4 bg-warm-bg min-h-screen pb-24">
-          <button onClick={() => setQuizMode(false)} className="flex items-center gap-2 text-gray-600 mb-6 font-medium bg-white px-4 py-2 rounded-full shadow-sm">
-            <ArrowLeft size={20} /> Back to Notes
-          </button>
-          
-          <div className="bg-white p-6 md:p-8 rounded-3xl shadow-md max-w-2xl mx-auto">
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="text-xl font-bold text-blue-900">Question {currentQuestionIndex + 1} of {selectedTopic.quiz.length}</h2>
-              <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full font-bold text-sm">Score: {score}</span>
+        <div className="flex flex-col h-[calc(100vh-140px)]">
+          <header className="px-6 py-4 flex items-center justify-between">
+            <button onClick={() => setQuizMode(false)} className="p-3 bg-white rounded-2xl shadow-sm border border-slate-100 bounce-click">
+              <ArrowLeft size={24} className="text-slate-600" />
+            </button>
+            <div className="flex flex-col items-center">
+               <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Progress</span>
+               <div className="flex gap-1 mt-1">
+                 {selectedTopic.quiz.map((_: any, idx: number) => (
+                   <div key={idx} className={`h-1.5 w-6 rounded-full transition-all duration-500 ${idx <= currentQuestionIndex ? 'bg-primary' : 'bg-slate-200'}`} />
+                 ))}
+               </div>
             </div>
-            
-            <p className="text-2xl font-bold text-gray-900 mb-8 leading-relaxed">{question.question}</p>
+            <div className="w-12 h-12 bg-blue-50 text-primary rounded-2xl flex items-center justify-center font-black">
+              {currentQuestionIndex + 1}
+            </div>
+          </header>
+          
+          <div className="flex-grow flex flex-col justify-center px-8 text-center mt-[-40px]">
+            <span className="text-primary font-black text-xs uppercase tracking-widest mb-4">Select Output</span>
+            <p className="text-3xl font-black text-slate-900 leading-tight tracking-tight mb-12">{question.question}</p>
             
             <div className="space-y-4">
               {question.options.map((option: string, index: number) => {
-                let buttonClass = "w-full p-4 text-left rounded-2xl font-medium text-lg transition-all border-2 ";
+                const isSelected = selectedOption === option;
+                const isCorrect = option === question.answer;
+                
+                let buttonStyle = "w-full p-6 rounded-[32px] text-left font-bold text-lg transition-all border-b-8 active:border-b-0 active:translate-y-1 ";
                 
                 if (selectedOption === null) {
-                  buttonClass += "border-gray-200 bg-gray-50 hover:border-blue-400 hover:bg-blue-50";
-                } else if (option === question.answer) {
-                  buttonClass += "border-green-500 bg-green-50 text-green-800";
-                } else if (option === selectedOption) {
-                  buttonClass += "border-red-500 bg-red-50 text-red-800";
+                  buttonStyle += "bg-white border-slate-200 text-slate-700 hover:border-blue-400 shadow-sm";
+                } else if (isCorrect) {
+                  buttonStyle += "bg-emerald-500 border-emerald-700 text-white shadow-xl shadow-emerald-500/20";
+                } else if (isSelected) {
+                  buttonStyle += "bg-rose-500 border-rose-700 text-white shadow-xl shadow-rose-500/20";
                 } else {
-                  buttonClass += "border-gray-200 bg-gray-50 opacity-50";
+                  buttonStyle += "bg-white border-slate-100 text-slate-300 opacity-40 shadow-none";
                 }
 
                 return (
@@ -151,12 +166,12 @@ export default function Grammar({ diamonds, setDiamonds }: { diamonds: number, s
                     key={index}
                     onClick={() => handleOptionSelect(option)}
                     disabled={selectedOption !== null}
-                    className={buttonClass}
+                    className={buttonStyle}
                   >
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-center px-2">
                       <span>{option}</span>
-                      {selectedOption !== null && option === question.answer && <CheckCircle2 className="text-green-500" />}
-                      {selectedOption === option && option !== question.answer && <XCircle className="text-red-500" />}
+                      {selectedOption !== null && isCorrect && <CheckCircle2 size={24} strokeWidth={3} />}
+                      {isSelected && !isCorrect && <XCircle size={24} strokeWidth={3} />}
                     </div>
                   </button>
                 );
@@ -169,35 +184,42 @@ export default function Grammar({ diamonds, setDiamonds }: { diamonds: number, s
 
     // Notes View
     return (
-      <div className="p-4 bg-warm-bg min-h-screen pb-24">
-        <button onClick={backToList} className="flex items-center gap-2 text-gray-600 mb-6 font-medium bg-white px-4 py-2 rounded-full shadow-sm">
-          <ArrowLeft size={20} /> Back to Topics
-        </button>
+      <div className="flex flex-col h-[calc(100vh-140px)]">
+        <header className="p-6 flex items-center gap-4 sticky top-0 bg-warm-bg/90 backdrop-blur-md z-10">
+          <button onClick={backToList} className="p-3 bg-white rounded-2xl shadow-sm border border-slate-100 bounce-click">
+            <ArrowLeft size={24} className="text-slate-600" />
+          </button>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight truncate">{selectedTopic.title}</h1>
+        </header>
         
-        <div className="bg-white p-6 md:p-8 rounded-3xl shadow-md max-w-3xl mx-auto">
-          <div className="flex items-center gap-4 mb-2">
-            <div className="p-3 bg-blue-100 text-blue-600 rounded-2xl">
-              <BookOpen size={32} />
-            </div>
-            <h1 className="text-3xl font-bold text-gray-900">{selectedTopic.title}</h1>
+        <div className="flex-grow overflow-y-auto px-6 space-y-8 pb-10">
+          <div className="bg-white p-8 rounded-[40px] shadow-sm border border-slate-100">
+             <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-3xl flex items-center justify-center mb-6 shadow-xl shadow-blue-500/10">
+                <BookOpen size={36} strokeWidth={2.5} />
+             </div>
+             <p className="text-slate-500 font-bold leading-relaxed text-lg italic">{selectedTopic.description}</p>
           </div>
-          <p className="text-gray-500 mb-8 text-lg ml-16">{selectedTopic.description}</p>
           
-          <div className="space-y-8 mb-12">
+          <div className="space-y-6">
             {selectedTopic.notes.map((note: any, index: number) => (
-              <div key={index} className="bg-blue-50/50 p-6 rounded-2xl border border-blue-100">
-                <h3 className="text-xl font-bold text-blue-900 mb-4 border-b border-blue-200 pb-2">{note.heading}</h3>
-                <p className="text-gray-700 whitespace-pre-line leading-relaxed text-lg">{note.text}</p>
+              <div key={index} className="bg-blue-50/50 p-8 rounded-[40px] border border-blue-100 group">
+                <h3 className="text-xl font-black text-blue-900 mb-4 flex items-center gap-3">
+                  <div className="w-2 h-8 bg-blue-500 rounded-full" />
+                  {note.heading}
+                </h3>
+                <p className="text-slate-700 whitespace-pre-line leading-relaxed text-[17px] font-medium">{note.text}</p>
               </div>
             ))}
           </div>
           
-          <div className="bg-gradient-to-r from-primary to-indigo-600 p-8 rounded-3xl text-white text-center shadow-lg">
-            <h3 className="text-2xl font-bold mb-2">Ready to test your knowledge?</h3>
-            <p className="mb-6 text-blue-100">Get all questions right to earn 10 diamonds!</p>
+          <div className="p-10 bg-slate-900 rounded-[48px] text-white text-center shadow-2xl relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-40 h-40 bg-primary/20 rounded-full blur-3xl group-hover:scale-110 transition-transform duration-700" />
+            <Trophy size={60} className="mx-auto mb-6 text-yellow-400 group-hover:rotate-12 transition-transform" />
+            <h3 className="text-3xl font-black mb-2 tracking-tight">Challenge Time!</h3>
+            <p className="mb-10 text-slate-400 font-bold">Earn 10 Diamonds by completing the quiz</p>
             <button 
               onClick={startQuiz} 
-              className="bg-white text-primary px-8 py-4 rounded-full font-bold text-xl hover:bg-gray-100 transition shadow-md w-full md:w-auto"
+              className="w-full bg-white text-slate-900 py-6 rounded-3xl font-black text-xl shadow-xl hover:bg-slate-100 transition bounce-click"
             >
               Start Quiz
             </button>
@@ -209,45 +231,44 @@ export default function Grammar({ diamonds, setDiamonds }: { diamonds: number, s
 
   // List View
   return (
-    <div className="p-4 md:p-8 bg-warm-bg min-h-screen pb-24">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-10">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Grammar Lessons</h1>
-          <p className="text-lg text-gray-600">Learn English grammar step by step with Hindi explanations.</p>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {GRAMMAR_TOPICS.map(topic => {
-            const isCompleted = completedTopics.includes(topic.id);
-            return (
-              <div 
-                key={topic.id} 
-                onClick={() => handleTopicSelect(topic)}
-                className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 hover:shadow-md hover:border-primary transition cursor-pointer group relative"
-              >
-                {isCompleted && (
-                  <div className="absolute top-4 right-4 text-green-500">
-                    <CheckCircle2 size={28} className="fill-green-100 rounded-full" />
-                  </div>
-                )}
-                <div className="flex items-start gap-4">
-                  <div className="p-4 bg-blue-50 text-primary rounded-2xl group-hover:bg-primary group-hover:text-white transition">
-                    <BookOpen size={28} />
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-bold text-gray-900 mb-2">{topic.title}</h2>
-                    <p className="text-gray-600">{topic.description}</p>
-                    <div className="mt-4 flex items-center gap-2 text-sm font-bold text-primary">
-                      <span>Read Notes & Take Quiz</span>
-                      <span className="text-gray-300">•</span>
-                      <span className="text-accent flex items-center gap-1"><span className="text-sm leading-none">💎</span> 10</span>
-                    </div>
-                  </div>
+    <div className="bg-blue-50/30 min-h-screen pb-40">
+      <div className="pt-8 px-6 mb-8">
+        <h1 className="text-4xl font-black text-slate-900 tracking-tight leading-none">Grammar</h1>
+        <p className="text-blue-600 font-bold mt-2 opacity-80 uppercase tracking-widest text-[10px]">Master English Rules</p>
+      </div>
+      
+      <div className="px-6 space-y-4">
+        {GRAMMAR_TOPICS.map(topic => {
+          const isCompleted = completedTopics.includes(topic.id);
+          return (
+            <button 
+              key={topic.id} 
+              onClick={() => handleTopicSelect(topic)}
+              className={`w-full bg-white p-6 rounded-[32px] shadow-sm border border-slate-100 flex items-center justify-between text-left bounce-click group ${
+                isCompleted ? 'bg-green-50/30' : ''
+              }`}
+            >
+              <div className="flex items-center gap-4">
+                <div className={`p-4 rounded-2xl ${isCompleted ? 'bg-green-100 text-green-600' : 'bg-blue-100 text-blue-600'}`}>
+                  <BookOpen size={28} strokeWidth={2.5} />
+                </div>
+                <div>
+                  <h2 className="text-xl font-black text-slate-800 leading-tight">{topic.title}</h2>
+                  <p className="text-xs font-medium text-slate-400 mt-1 line-clamp-1">{topic.description}</p>
                 </div>
               </div>
-            );
-          })}
-        </div>
+              <div className="flex flex-col items-end gap-1">
+                {isCompleted ? (
+                   <CheckCircle2 size={24} className="text-green-500" />
+                ) : (
+                  <div className="flex items-center gap-1 bg-amber-100 text-amber-700 p-1 px-2 rounded-xl text-[10px] font-black">
+                    <span className="text-xs">💎</span> 10
+                  </div>
+                )}
+              </div>
+            </button>
+          );
+        })}
       </div>
     </div>
   );

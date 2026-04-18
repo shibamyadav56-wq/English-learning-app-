@@ -19,32 +19,53 @@ export default function Home({ diamonds, setDiamonds }: { diamonds: number, setD
   };
 
   return (
-    <div className="p-4 bg-warm-bg min-h-screen">
-      <div className="flex justify-between items-center mb-6 bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
-        <button onClick={() => setShowRewards(true)} className="flex items-center gap-2 bg-green-50 p-2 rounded-full px-4">
-          <Gift className="text-green-600" />
-          <span className="font-semibold text-green-800">Rewards</span>
-        </button>
-        <div className="flex items-center gap-2 bg-yellow-50 p-2 rounded-full px-4">
-          <span className="text-xl leading-none">💎</span>
-          <span className="font-bold text-yellow-800">{diamonds}</span>
+    <div className="p-6 space-y-6">
+      {/* Top Welcome Section */}
+      <section className="mt-2 flex justify-between items-start">
+        <div>
+          <h2 className="text-3xl font-black text-slate-900 tracking-tight leading-none mb-2">
+            Hello! 👋
+          </h2>
+          <p className="text-slate-500 font-medium">Ready to learn something today?</p>
         </div>
-      </div>
+        <button 
+          onClick={() => setShowRewards(true)} 
+          className="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 bounce-click flex items-center gap-2"
+        >
+          <div className="p-2 bg-amber-100 text-amber-600 rounded-xl">
+            <Gift size={20} strokeWidth={2.5} />
+          </div>
+          <div className="flex flex-col items-start pr-1">
+            <span className="text-[9px] uppercase font-black text-slate-400 leading-none">Daily</span>
+            <span className="text-xs font-black text-slate-800 leading-tight">Bonus</span>
+          </div>
+        </button>
+      </section>
 
-      <div className="grid grid-cols-2 gap-4">
+      {/* Main Action Grid */}
+      <div className="grid grid-cols-1 gap-4 pt-4">
         <button 
           onClick={() => navigate('/ai-assistant')}
-          className="col-span-2 h-40 flex flex-col items-center justify-center bg-primary text-white rounded-3xl shadow-lg hover:bg-blue-700 transition"
+          className="group relative h-44 flex flex-col items-start justify-end p-6 bg-gradient-to-br from-blue-500 to-blue-700 text-white rounded-[40px] shadow-xl shadow-blue-500/20 overflow-hidden bounce-click"
         >
-          <Bot size={64} />
-          <span className="mt-2 text-xl font-bold">AI Homework Assistant</span>
+          <div className="absolute -top-6 -right-6 w-32 h-32 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
+          <div className="absolute top-6 right-6 p-4 bg-white/20 backdrop-blur-md rounded-3xl">
+            <Bot size={36} strokeWidth={2.5} />
+          </div>
+          <span className="text-2xl font-black leading-tight">AI Homework<br/>Assistant</span>
+          <p className="mt-1 text-sm text-blue-100 font-medium opacity-80">Solve your problems instantly</p>
         </button>
+
         <button 
           onClick={() => navigate('/word-meaning')}
-          className="col-span-2 h-40 flex flex-col items-center justify-center bg-purple-600 text-white rounded-3xl shadow-lg hover:bg-purple-700 transition"
+          className="group relative h-44 flex flex-col items-start justify-end p-6 bg-gradient-to-br from-purple-500 to-indigo-600 text-white rounded-[40px] shadow-xl shadow-purple-500/20 overflow-hidden bounce-click"
         >
-          <BookOpenText size={64} />
-          <span className="mt-2 text-xl font-bold">Word Meaning</span>
+          <div className="absolute -top-6 -right-6 w-32 h-32 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
+          <div className="absolute top-6 right-6 p-4 bg-white/20 backdrop-blur-md rounded-3xl">
+            <BookOpenText size={36} strokeWidth={2.5} />
+          </div>
+          <span className="text-2xl font-black leading-tight">Daily Word<br/>Meanings</span>
+          <p className="mt-1 text-sm text-purple-100 font-medium opacity-80">Expand your vocabulary</p>
         </button>
       </div>
 
