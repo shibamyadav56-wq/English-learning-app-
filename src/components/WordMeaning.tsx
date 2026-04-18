@@ -2,12 +2,19 @@ import { useState, useEffect } from 'react';
 import VocabularyQuiz from './VocabularyQuiz';
 import { WORD_LIST } from '../constants/wordList';
 import { ChevronRight } from 'lucide-react';
+import Notification from './Notification';
 
 export default function WordMeaning({ setDiamonds }: { setDiamonds: (d: number | ((prev: number) => number)) => void }) {
   const [showQuiz, setShowQuiz] = useState(false);
   const [unlockedWords, setUnlockedWords] = useState(() => {
     const saved = localStorage.getItem('unlockedWords');
     return saved ? parseInt(saved, 10) : 10;
+  });
+
+  const [notification, setNotification] = useState<{ isOpen: boolean; message: string; type: 'success' | 'error' | 'info'; title?: string }>({
+    isOpen: false,
+    message: '',
+    type: 'info',
   });
 
   const [currentLevel, setCurrentLevel] = useState(1);
@@ -24,9 +31,19 @@ export default function WordMeaning({ setDiamonds }: { setDiamonds: (d: number |
     if (points === 10) {
       setUnlockedWords(prev => Math.min(prev + 10, WORD_LIST.length));
       setDiamonds(prev => prev + 5); // Award 5 diamonds
-      alert('Quiz completed! 10 new words unlocked and 5 diamonds awarded!');
+      setNotification({
+        isOpen: true,
+        message: 'Shabash! Aapne quiz poori kar li hai. 10 naye shabd unlock ho gaye hain aur aapko 5 diamonds mile hain!',
+        type: 'success',
+        title: 'Quiz Complete! 💎'
+      });
     } else {
-      alert('Quiz completed! Try again to unlock more words!');
+      setNotification({
+        isOpen: true,
+        message: 'Quiz poori ho gayi. Agli baar naye shabd unlock karne ke liye sabhi sawal sahi karein!',
+        type: 'info',
+        title: 'Koshish Jari Rakhein'
+      });
     }
   };
 
@@ -104,6 +121,13 @@ export default function WordMeaning({ setDiamonds }: { setDiamonds: (d: number |
       </div>
 
       {showQuiz && <VocabularyQuiz unlockedCount={unlockedWords} onClose={() => setShowQuiz(false)} onComplete={handleQuizComplete} />}
+      <Notification 
+        isOpen={notification.isOpen}
+        onClose={() => setNotification(prev => ({ ...prev, isOpen: false }))}
+        message={notification.message}
+        type={notification.type}
+        title={notification.title}
+      />
     </div>
   );
 }

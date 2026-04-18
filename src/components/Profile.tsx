@@ -4,6 +4,7 @@ import { signOut } from 'firebase/auth';
 import { doc, getDoc, collection, query, orderBy, limit, getDocs, where, getCountFromServer, updateDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { LogOut, User as UserIcon, Trophy, Medal, Pencil, Check, X } from 'lucide-react';
+import Notification from './Notification';
 
 interface ProfileProps {
   diamonds: number;
@@ -23,6 +24,11 @@ export default function Profile({ diamonds }: ProfileProps) {
   const [isUpdating, setIsUpdating] = useState(false);
   const [leaderboard, setLeaderboard] = useState<LeaderboardUser[]>([]);
   const [userRank, setUserRank] = useState<number | null>(null);
+  const [notification, setNotification] = useState<{ isOpen: boolean; message: string; type: 'success' | 'error' | 'info'; title?: string }>({
+    isOpen: false,
+    message: '',
+    type: 'info',
+  });
   const isMounted = React.useRef(true);
   const user = auth.currentUser;
 
@@ -106,7 +112,12 @@ export default function Profile({ diamonds }: ProfileProps) {
       fetchData();
     } catch (error) {
       console.error("Error updating name:", error);
-      alert("Failed to update name. Please try again.");
+      setNotification({
+        isOpen: true,
+        message: 'Naam update nahi ho paya. Kripya phir se koshish karein.',
+        type: 'error',
+        title: 'Error'
+      });
     } finally {
       setIsUpdating(false);
     }
@@ -156,7 +167,12 @@ export default function Profile({ diamonds }: ProfileProps) {
 
           {/* Ad Button Placeholder */}
           <button 
-            onClick={() => alert("AdMob integration coming soon!")}
+            onClick={() => setNotification({
+              isOpen: true,
+              message: 'AdMob integration jald hi aa raha hai!',
+              type: 'info',
+              title: 'Coming Soon'
+            })}
             className="w-20 h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl shadow-md flex flex-col items-center justify-center text-white font-black transition-transform hover:scale-105 active:scale-95 border-2 border-yellow-200 shrink-0"
           >
             <span className="text-2xl mb-1">📺</span>
@@ -308,6 +324,13 @@ export default function Profile({ diamonds }: ProfileProps) {
           </div>
         </div>
       </div>
+      <Notification 
+        isOpen={notification.isOpen}
+        onClose={() => setNotification(prev => ({ ...prev, isOpen: false }))}
+        message={notification.message}
+        type={notification.type}
+        title={notification.title}
+      />
     </div>
   );
 }

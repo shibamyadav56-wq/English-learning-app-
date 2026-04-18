@@ -1,8 +1,14 @@
 import { useState, useEffect } from 'react';
 import { X, Clock, Gift } from 'lucide-react';
+import Notification from './Notification';
 
 export default function Rewards({ onClose, onClaim }: { onClose: () => void, onClaim: (amount: number) => void }) {
   const [activeTab, setActiveTab] = useState<'daily' | 'time'>('daily');
+  const [notification, setNotification] = useState<{ isOpen: boolean; message: string; type: 'success' | 'error' | 'info'; title?: string }>({
+    isOpen: false,
+    message: '',
+    type: 'info',
+  });
   const [lastClaimed, setLastClaimed] = useState<number | null>(() => {
     const saved = localStorage.getItem('lastClaimed');
     return saved ? parseInt(saved, 10) : null;
@@ -26,11 +32,21 @@ export default function Rewards({ onClose, onClaim }: { onClose: () => void, onC
   const handleClaimDaily = (claimDay: number) => {
     const now = Date.now();
     if (lastClaimed && now - lastClaimed < 24 * 60 * 60 * 1000) {
-      alert('You can only claim once every 24 hours!');
+      setNotification({
+        isOpen: true,
+        message: 'Aap har 24 ghante mein sirf ek baar claim kar sakte hain!',
+        type: 'error',
+        title: 'Thoda Intezar Karein'
+      });
       return;
     }
     if (claimDay !== day) {
-      alert('You cannot claim this day yet!');
+      setNotification({
+        isOpen: true,
+        message: 'Aap abhi is din ka reward claim nahi kar sakte!',
+        type: 'error',
+        title: 'Not Ready'
+      });
       return;
     }
     
@@ -42,7 +58,12 @@ export default function Rewards({ onClose, onClaim }: { onClose: () => void, onC
     const nextDay = day < 30 ? day + 1 : 1;
     setDay(nextDay);
     localStorage.setItem('currentDay', nextDay.toString());
-    alert(`Claimed ${amount} diamonds for Day ${claimDay}!`);
+    setNotification({
+      isOpen: true,
+      message: `Mubarak ho! Aapne Day ${claimDay} ke liye ${amount} diamonds claim kar liye hain!`,
+      type: 'success',
+      title: 'Diamond Claimed! 💎'
+    });
   };
 
   const claimTimeReward = (minutes: number, amount: number) => {
@@ -53,9 +74,19 @@ export default function Rewards({ onClose, onClaim }: { onClose: () => void, onC
       const newTime = usageTime - secondsNeeded;
       setUsageTime(newTime);
       localStorage.setItem('usageTime', newTime.toString());
-      alert(`Claimed ${amount} diamonds!`);
+      setNotification({
+        isOpen: true,
+        message: `Shabash! Aapne ${amount} diamonds claim kar liye hain!`,
+        type: 'success',
+        title: 'Reward Unlocked! 💎'
+      });
     } else {
-      alert(`Need more time!`);
+      setNotification({
+        isOpen: true,
+        message: 'Reward claim karne ke liye thoda aur samay chahiye!',
+        type: 'info',
+        title: 'App Chalao'
+      });
     }
   };
 
@@ -136,6 +167,13 @@ export default function Rewards({ onClose, onClaim }: { onClose: () => void, onC
           </div>
         )}
       </div>
+      <Notification 
+        isOpen={notification.isOpen}
+        onClose={() => setNotification(prev => ({ ...prev, isOpen: false }))}
+        message={notification.message}
+        type={notification.type}
+        title={notification.title}
+      />
     </div>
   );
 }

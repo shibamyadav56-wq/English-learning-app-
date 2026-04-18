@@ -2,10 +2,16 @@ import { useState, useEffect } from 'react';
 import { Skull, Lock, Star, Zap, Trophy } from 'lucide-react';
 import ExerciseQuiz from './ExerciseQuiz';
 import { EXERCISES } from '../constants/exercises';
+import Notification from './Notification';
 
 export default function LearningPath({ setDiamonds }: { setDiamonds: (d: number | ((prev: number) => number)) => void }) {
   const [showExercise, setShowExercise] = useState(false);
   const [exerciseToLoad, setExerciseToLoad] = useState<number>(0);
+  const [notification, setNotification] = useState<{ isOpen: boolean; message: string; type: 'success' | 'error' | 'info'; title?: string }>({
+    isOpen: false,
+    message: '',
+    type: 'info',
+  });
   const [currentDifficulty, setCurrentDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy');
   const [completedExercises, setCompletedExercises] = useState<number[]>(() => {
     const saved = localStorage.getItem('completedExercises');
@@ -36,7 +42,12 @@ export default function LearningPath({ setDiamonds }: { setDiamonds: (d: number 
       setCompletedExercises(prev => [...prev, exerciseToLoad]);
     }
     
-    alert(`Exercise completed! You earned ${reward} diamonds!`);
+    setNotification({
+      isOpen: true,
+      message: `Mubarak ho! Aapne exercise poori kar li hai aur ${reward} diamonds kama liye hain!`,
+      type: 'success',
+      title: 'Exercise Complete! 💎'
+    });
   };
 
   return (
@@ -79,6 +90,13 @@ export default function LearningPath({ setDiamonds }: { setDiamonds: (d: number 
           <ExerciseQuiz exerciseNumber={exerciseToLoad} onClose={() => setShowExercise(false)} onComplete={handleExerciseComplete} />
         </div>
       )}
+      <Notification 
+        isOpen={notification.isOpen}
+        onClose={() => setNotification(prev => ({ ...prev, isOpen: false }))}
+        message={notification.message}
+        type={notification.type}
+        title={notification.title}
+      />
     </div>
   );
 }

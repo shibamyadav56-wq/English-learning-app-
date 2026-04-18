@@ -2,12 +2,18 @@ import React, { useState } from 'react';
 import { auth, db } from '../lib/firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
+import Notification from './Notification';
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [notification, setNotification] = useState<{ isOpen: boolean; message: string; type: 'success' | 'error' | 'info'; title?: string }>({
+    isOpen: false,
+    message: '',
+    type: 'info',
+  });
 
   // Generate a deterministic 12-digit numeric ID from the Firebase UID
   const get12DigitId = (uid: string) => {
@@ -37,9 +43,19 @@ export default function AuthPage() {
     } catch (error: any) {
       console.error('Auth error:', error);
       if (error.code === 'auth/invalid-credential') {
-        alert('Invalid email or password.');
+        setNotification({
+          isOpen: true,
+          message: 'Ghalat email ya password.',
+          type: 'error',
+          title: 'Login Error'
+        });
       } else {
-        alert(error instanceof Error ? error.message : 'Authentication failed');
+        setNotification({
+          isOpen: true,
+          message: error instanceof Error ? error.message : 'Authentication mein dikkat aayi hai.',
+          type: 'error',
+          title: 'Error'
+        });
       }
     }
   };
@@ -92,6 +108,13 @@ export default function AuthPage() {
           {isLogin ? 'Need an account? Sign Up' : 'Already have an account? Login'}
         </p>
       </div>
+      <Notification 
+        isOpen={notification.isOpen}
+        onClose={() => setNotification(prev => ({ ...prev, isOpen: false }))}
+        message={notification.message}
+        type={notification.type}
+        title={notification.title}
+      />
     </div>
   );
 }
