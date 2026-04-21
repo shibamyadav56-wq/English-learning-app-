@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
-import { auth, db } from './lib/firebase';
+import { auth, db, testConnection } from './lib/firebase';
 import Layout from './components/Layout';
 import Home from './components/Home';
 import Grammar from './components/Grammar';
@@ -26,10 +26,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [diamonds, setDiamonds] = useState(() => {
-    const savedDiamonds = localStorage.getItem('diamonds');
-    return savedDiamonds ? parseInt(savedDiamonds, 10) : 0;
-  });
+  const [diamonds, setDiamonds] = useState(0);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -42,11 +39,11 @@ export default function App() {
             setDiamonds(data.diamonds || 0);
             
             // Restore other progress from DB to local storage if it exists
-            if (data.unlockedWords !== undefined) localStorage.setItem('unlockedWords', data.unlockedWords.toString());
-            if (data.completedGrammarTopics !== undefined) localStorage.setItem('completedGrammarTopics', JSON.stringify(data.completedGrammarTopics));
-            if (data.usageTime !== undefined) localStorage.setItem('usageTime', data.usageTime.toString());
-            if (data.lastClaimed !== undefined) localStorage.setItem('lastClaimed', data.lastClaimed.toString());
-            if (data.currentDay !== undefined) localStorage.setItem('currentDay', data.currentDay.toString());
+            localStorage.setItem('unlockedWords', (data.unlockedWords || 10).toString());
+            localStorage.setItem('completedGrammarTopics', JSON.stringify(data.completedGrammarTopics || []));
+            localStorage.setItem('usageTime', (data.usageTime || 0).toString());
+            localStorage.setItem('lastClaimed', (data.lastClaimed || 0).toString());
+            localStorage.setItem('currentDay', (data.currentDay || 1).toString());
             
             // Dispatch storage event so other components update
             try {
@@ -56,6 +53,9 @@ export default function App() {
               event.initEvent('storage', true, true);
               window.dispatchEvent(event);
             }
+          } else {
+            // New user, init with default values but sync to DB
+            setDiamonds(0);
           }
         } catch (error) {
           console.error("Error fetching user data:", error);
@@ -63,6 +63,7 @@ export default function App() {
         setIsAdmin(currentUser.email === 'shibamyadav56@gmail.com');
         setDataLoaded(true);
       } else {
+        setDiamonds(0); // Reset on logout
         setDataLoaded(false);
         setIsAdmin(false);
       }
@@ -94,6 +95,7 @@ export default function App() {
 
   // Global timer to track app usage time
   useEffect(() => {
+    testConnection();
     const timer = setInterval(() => {
       const current = parseInt(localStorage.getItem('usageTime') || '0', 10);
       localStorage.setItem('usageTime', (current + 1).toString());

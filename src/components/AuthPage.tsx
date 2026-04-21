@@ -49,6 +49,13 @@ export default function AuthPage() {
           type: 'error',
           title: 'Login Error'
         });
+      } else if (error.code === 'auth/email-already-in-use') {
+        setNotification({
+          isOpen: true,
+          message: 'Yeh email pehle se registered hai. Kripya login karein.',
+          type: 'error',
+          title: 'Sign Up Error'
+        });
       } else {
         setNotification({
           isOpen: true,
