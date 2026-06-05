@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import VocabularyQuiz from './VocabularyQuiz';
 import { WORD_LIST } from '../constants/wordList';
-import { ChevronRight, Lock } from 'lucide-react';
+import { ChevronRight, Lock, ArrowLeft } from 'lucide-react';
 import Notification from './Notification';
+import { useNavigate } from 'react-router-dom';
 
 export default function WordMeaning({ setDiamonds }: { setDiamonds: (d: number | ((prev: number) => number)) => void }) {
   const [showQuiz, setShowQuiz] = useState(false);
+  const navigate = useNavigate();
   const [unlockedWords, setUnlockedWords] = useState(() => {
     const saved = localStorage.getItem('unlockedWords');
     return saved ? parseInt(saved, 10) : 10;
@@ -33,25 +35,34 @@ export default function WordMeaning({ setDiamonds }: { setDiamonds: (d: number |
       setDiamonds(prev => prev + 5); // Award 5 diamonds
       setNotification({
         isOpen: true,
-        message: 'Shabash! Aapne quiz poori kar li hai. 10 naye shabd unlock ho gaye hain aur aapko 5 diamonds mile hain!',
+        message: 'Well done! You have completed the quiz. 10 new words have been unlocked and you received 5 diamonds!',
         type: 'success',
         title: 'Quiz Complete! 💎'
       });
     } else {
       setNotification({
         isOpen: true,
-        message: 'Quiz poori ho gayi. Agli baar naye shabd unlock karne ke liye sabhi sawal sahi karein!',
+        message: 'Quiz completed. Correct all questions next time to unlock new words!',
         type: 'info',
-        title: 'Koshish Jari Rakhein'
+        title: 'Keep Trying!'
       });
     }
   };
 
   return (
     <div className="bg-orange-50/30 min-h-screen pb-40">
-      <div className="pt-8 px-6 mb-4">
-        <h1 className="text-4xl font-black text-orange-900 tracking-tight leading-none">Vocabulary</h1>
-        <p className="text-orange-600 font-bold mt-2 opacity-80 uppercase tracking-widest text-[10px]">Learn 1000+ Words</p>
+      <div className="pt-8 px-6 mb-4 flex items-center gap-4">
+        <button 
+          onClick={() => navigate('/')} 
+          className="p-3 bg-white text-slate-600 rounded-2xl border border-slate-200 hover:bg-slate-50 transition-all active:scale-95 shadow-sm"
+          aria-label="Go back to Home"
+        >
+          <ArrowLeft size={24} />
+        </button>
+        <div>
+          <h1 className="text-4xl font-black text-orange-900 tracking-tight leading-none">Vocabulary</h1>
+          <p className="text-orange-600 font-bold mt-2 opacity-80 uppercase tracking-widest text-[10px]">Learn 1000+ Words</p>
+        </div>
       </div>
       
       {/* Level Tabs */}

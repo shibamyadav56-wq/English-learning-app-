@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BookOpen, ArrowLeft, Trophy, CheckCircle2, XCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { GRAMMAR_TOPICS } from '../constants/grammar';
 
 export default function Grammar({ diamonds, setDiamonds }: { diamonds: number, setDiamonds: (d: number | ((prev: number) => number)) => void }) {
@@ -11,10 +12,16 @@ export default function Grammar({ diamonds, setDiamonds }: { diamonds: number, s
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
   const [earnedNow, setEarnedNow] = useState(false);
+  const navigate = useNavigate();
 
   const [completedTopics, setCompletedTopics] = useState<string[]>(() => {
     const saved = localStorage.getItem('completedGrammarTopics');
-    return saved ? JSON.parse(saved) : [];
+    if (!saved) return [];
+    try {
+      return JSON.parse(saved);
+    } catch {
+      return [];
+    }
   });
 
   useEffect(() => {
@@ -232,9 +239,18 @@ export default function Grammar({ diamonds, setDiamonds }: { diamonds: number, s
   // List View
   return (
     <div className="bg-blue-50/30 min-h-screen pb-40">
-      <div className="pt-8 px-6 mb-8">
-        <h1 className="text-4xl font-black text-slate-900 tracking-tight leading-none">Grammar</h1>
-        <p className="text-blue-600 font-bold mt-2 opacity-80 uppercase tracking-widest text-[10px]">Master English Rules</p>
+      <div className="pt-8 px-6 mb-8 flex items-center gap-4">
+        <button 
+          onClick={() => navigate('/')} 
+          className="p-3 bg-white text-slate-600 rounded-2xl border border-slate-200 hover:bg-slate-50 transition-all active:scale-95 shadow-sm"
+          aria-label="Go back to Home"
+        >
+          <ArrowLeft size={24} />
+        </button>
+        <div>
+          <h1 className="text-4xl font-black text-slate-900 tracking-tight leading-none">Grammar</h1>
+          <p className="text-blue-600 font-bold mt-2 opacity-80 uppercase tracking-widest text-[10px]">Master English Rules</p>
+        </div>
       </div>
       
       <div className="px-6 space-y-4">

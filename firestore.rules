@@ -1,18 +1,73 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Helper functions
-    function isAuthenticated() {
-      return request.auth != null;
-    }
-    function isOwner(userId) {
-      return isAuthenticated() && request.auth.uid == userId;
+    // --------------------------------------------------------------------------------
+    // GLOBAL SAFETY NET
+    // --------------------------------------------------------------------------------
+    match /{document=**} {
+      allow read, write: if false;
     }
 
-    // Users collection
-    match /users/{userId} {
+    // --------------------------------------------------------------------------------
+    // HELPER FUNCTIONS
+    // --------------------------------------------------------------------------------
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isNumber(field) {
+       return incoming()[field] is number;
+    }
+
+    // --------------------------------------------------------------------------------
+    // USER VALIDATION BLUEPRINT
+    // --------------------------------------------------------------------------------
+    function isValidUser(data) {
+      return data.get('diamonds', 0) is number &&
+             (data.keys().hasAny(['name']) ? data.name is string && data.name.size() <= 100 : true) &&
+             (data.keys().hasAny(['email']) ? data.email is string : true) &&
+             (data.keys().hasAny(['displayId']) ? data.displayId is string : true) &&
+             (data.keys().hasAny(['createdAt']) ? data.createdAt is timestamp : true) &&
+             (data.keys().hasAny(['photoURL']) ? data.photoURL is string && data.photoURL.size() <= 1048576 : true) &&
+             (data.keys().hasAny(['unlockedAvatars']) ? data.unlockedAvatars is list && data.unlockedAvatars.size() <= 100 : true) &&
+             (data.keys().hasAny(['completedGrammarTopics']) ? data.completedGrammarTopics is list && data.completedGrammarTopics.size() <= 100 : true) &&
+             (data.keys().hasAny(['userStreak']) ? data.userStreak is number : true) &&
+             (data.keys().hasAny(['lastClaimedTime']) ? data.lastClaimedTime is number : true) &&
+             (data.keys().hasAny(['usageTime']) ? data.usageTime is number : true) &&
+             (data.keys().hasAny(['lastClaimed']) ? data.lastClaimed is number : true) &&
+             (data.keys().hasAny(['currentDay']) ? data.currentDay is number : true) &&
+             (data.keys().hasAny(['completedExercises']) ? data.completedExercises is list : true) &&
+             (data.keys().hasAny(['completedSpeechSentences']) ? data.completedSpeechSentences is list : true) &&
+             (data.keys().hasAny(['unlockedWords']) ? data.unlockedWords is number : true) &&
+             (data.keys().hasAny(['bio']) ? data.bio is string && data.bio.size() <= 500 : true);
+    }
+
+    // --------------------------------------------------------------------------------
+    // COLLECTIONS
+    // --------------------------------------------------------------------------------
+    match /test/connection {
       allow read: if true;
-      allow write: if isOwner(userId);
+    }
+
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow write: if isOwner(userId) || (isSignedIn() && request.resource.data.keys().hasAny(['diamonds']));
     }
   }
 }

@@ -1,20 +1,16 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, doc, getDocFromServer } from 'firebase/firestore';
-
-const firebaseConfig = {
-  apiKey: "AIzaSyB99DUl0DVOJGssuNsP0yIDz-SO5h9jTJY",
-  authDomain: "english-learning-app-81985.firebaseapp.com",
-  projectId: "english-learning-app-81985",
-  storageBucket: "english-learning-app-81985.appspot.com",
-  messagingSenderId: "886871494264",
-  appId: "1:886871494264:web:ca27f3a3e4e4e0fa88278d",
-  measurementId: "G-MZQ12ZLN6N"
-};
+import { initializeFirestore, doc, getDocFromServer, persistentLocalCache, persistentMultipleTabManager } from 'firebase/firestore';
+import firebaseConfig from '../../firebase-applet-config.json';
 
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
-export const db = getFirestore(app);
+
+// Use initializeFirestore with long polling enabled to prevent WebSocket connection failures
+export const db = initializeFirestore(app, {
+  experimentalForceLongPolling: true,
+  localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
+}, firebaseConfig.firestoreDatabaseId);
 
 export async function testConnection() {
   try {
@@ -23,7 +19,11 @@ export async function testConnection() {
     console.log("Firestore connection successful");
   } catch (error) {
     if(error instanceof Error) {
-      console.error("Firestore connection failed:", error.message);
+      if (error.message.includes('the client is offline') || error.message.includes('unavailable')) {
+        console.warn("Firestore running in offline/cached cache mode cleanly:", error.message);
+      } else {
+        console.error("Firestore connection status:", error.message);
+      }
     }
   }
 }

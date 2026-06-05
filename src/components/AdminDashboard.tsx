@@ -27,7 +27,7 @@ export default function AdminDashboard() {
   return (
     <div className="bg-slate-900 min-h-screen pb-20 text-white">
       <header className="p-6 flex items-center gap-4 bg-slate-900/90 backdrop-blur-md sticky top-0 z-10 border-b border-white/10">
-        <button onClick={() => navigate(-1)} className="p-3 bg-white/5 text-slate-300 rounded-2xl active:scale-90 transition">
+        <button onClick={() => navigate('/')} className="p-3 bg-white/5 text-slate-300 rounded-2xl active:scale-90 transition">
           <ArrowLeft size={24} />
         </button>
         <h1 className="text-2xl font-black tracking-tight">Admin Console</h1>

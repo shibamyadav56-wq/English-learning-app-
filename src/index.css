@@ -19,7 +19,7 @@
 
 @layer utilities {
   .app-container {
-    @apply w-full max-w-md mx-auto min-h-screen bg-warm-bg shadow-2xl relative flex flex-col;
+    @apply w-full max-w-md mx-auto min-h-[100dvh] bg-warm-bg shadow-2xl relative flex flex-col;
   }
   
   .glass-effect {
@@ -28,6 +28,10 @@
   
   .safe-bottom {
     padding-bottom: env(safe-area-inset-bottom, 24px);
+  }
+
+  .mb-safe {
+    margin-bottom: env(safe-area-inset-bottom, 0px);
   }
 
   .nav-shadow {

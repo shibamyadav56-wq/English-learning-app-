@@ -56,7 +56,7 @@ export default function Notification({ isOpen, onClose, message, type = 'info', 
                 onClick={onClose}
                 className="mt-6 w-full bg-slate-900 text-white py-3 rounded-2xl font-bold hover:bg-slate-800 transition shadow-lg active:scale-95"
               >
-                Theek Hai
+                OK
               </button>
             </div>
             

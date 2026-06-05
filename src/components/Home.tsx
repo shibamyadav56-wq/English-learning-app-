@@ -7,7 +7,47 @@ export default function Home({ diamonds, setDiamonds }: { diamonds: number, setD
   const [showRewards, setShowRewards] = useState(false);
   const navigate = useNavigate();
 
-  const addDiamonds = (amount: number) => {
+  const addDiamonds = async (amount: number, unlockedAvatarIds?: string[]) => {
+    if (unlockedAvatarIds && unlockedAvatarIds.length > 0) {
+      const current = localStorage.getItem('unlockedAvatars');
+      let unlocked = ['cyber_ninja'];
+      if (current) {
+        try {
+          unlocked = JSON.parse(current);
+        } catch (e) {}
+      }
+      let updated = false;
+      unlockedAvatarIds.forEach(id => {
+        if (!unlocked.includes(id)) {
+          unlocked.push(id);
+          updated = true;
+        }
+      });
+      if (updated) {
+        localStorage.setItem('unlockedAvatars', JSON.stringify(unlocked));
+        try {
+          window.dispatchEvent(new Event('storage'));
+        } catch (e) {
+          const event = document.createEvent('Event');
+          event.initEvent('storage', true, true);
+          window.dispatchEvent(event);
+        }
+
+        // Sync directly to Firestore so the user's newly-unlocked bundle avatar is persistent even with 0 diamond rewards
+        try {
+          const { doc, updateDoc } = await import('firebase/firestore');
+          const { db, auth } = await import('../lib/firebase');
+          const user = auth.currentUser;
+          if (user) {
+            await updateDoc(doc(db, 'users', user.uid), {
+              unlockedAvatars: unlocked
+            });
+          }
+        } catch (err) {
+          console.error("Error syncing bundle avatars to Firestore:", err);
+        }
+      }
+    }
     setDiamonds(prev => prev + amount);
   };
 

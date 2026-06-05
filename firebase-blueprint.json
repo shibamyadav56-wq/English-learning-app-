@@ -1,0 +1,48 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile with their name, diamonds count, and profile picture.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The displayName of the user."
+        },
+        "diamonds": {
+          "type": "integer",
+          "description": "The amount of study gems/diamonds earned by the user."
+        },
+        "photoURL": {
+          "type": "string",
+          "description": "The custom avatar/photo URL of the user."
+        },
+        "unlockedAvatars": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The custom avatars unlocked/purchased by the user."
+        },
+        "userStreak": {
+          "type": "integer",
+          "description": "The current daily claim streak index, from 1 to 30."
+        },
+        "lastClaimedTime": {
+          "type": "integer",
+          "description": "Timestamp in milliseconds representing the exact last reward claim."
+        }
+      },
+      "required": [
+        "name",
+        "diamonds"
+      ]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "User",
+      "description": "Collection of users containing details on user's identity and progression statistics."
+    }
+  }
+}
