@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Trophy, Flame, Star, Sparkles, Heart } from 'lucide-react';
 import celebrityImg from '../../assets/images/boy_dancing_trophy_1780577419263.png';
+import { showInterstitialAd } from '../../lib/adService';
 
 interface Particle {
   id: number;
@@ -69,6 +70,9 @@ export const LevelCompleteModal: React.FC<{ xp: number, onContinue: () => void, 
 
   // Automatically trigger fireworks repeatedly
   useEffect(() => {
+    // Show interstitial ad on level complete
+    showInterstitialAd();
+
     // Initial batch of crackers
     setTimeout(spawnFirework, 100);
     setTimeout(spawnFirework, 450);

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { X, Clock, Gift, Flame, Lock, Check } from 'lucide-react';
+import { X, Clock, Gift, Flame, Lock, Check, PlayCircle } from 'lucide-react';
 import Notification from './Notification';
+import { showRewardedAd } from '../lib/adService';
 
 // Cool gamified avatars imported for special reward milestones
 import avatarShadowKnight from '../assets/images/shadow_knight_new_1780555060997.png';
@@ -214,6 +215,26 @@ export default function Rewards({ onClose, onClaim }: { onClose: () => void, onC
     }
   };
 
+  const handleEarnGemsWithAd = async () => {
+    const granted = await showRewardedAd();
+    if (granted) {
+      onClaim(2); // Reward 2 gems for watching an ad
+      setNotification({
+        isOpen: true,
+        message: 'You earned 2 gems for watching the ad!',
+        type: 'success',
+        title: 'Awesome! 💎'
+      });
+    } else {
+      setNotification({
+        isOpen: true,
+        message: 'Could not load ad at the moment. Try again later.',
+        type: 'error',
+        title: 'Ad Unavailable'
+      });
+    }
+  };
+
   const renderProgressBar = (minutes: number) => {
     const secondsNeeded = minutes * 60;
     const progress = Math.min((usageTime / secondsNeeded) * 100, 100);
@@ -314,14 +335,6 @@ export default function Rewards({ onClose, onClaim }: { onClose: () => void, onC
                     <h3 className="text-base font-black tracking-tight leading-none">
                       Current Streak: {isBroken ? 0 : userStreak} Days 🔥
                     </h3>
-                    <p className="text-[10px] font-bold text-orange-50 mt-1 uppercase tracking-wider">
-                      {isCooldown 
-                        ? "Day Claimed! Wait for next day" 
-                        : isBroken 
-                          ? "Missed a day! Streak reset to 1." 
-                          : "Your reward is ready to Claim!"
-                      }
-                    </p>
                   </div>
                 </div>
                 {isCooldown ? (
@@ -338,6 +351,14 @@ export default function Rewards({ onClose, onClaim }: { onClose: () => void, onC
                   </button>
                 )}
               </div>
+              
+              <button
+                onClick={handleEarnGemsWithAd}
+                className="w-full bg-indigo-600 text-white p-4 rounded-3xl flex items-center justify-center gap-3 font-black text-sm hover:bg-indigo-700 active:scale-95 transition shadow-lg"
+              >
+                <PlayCircle size={20} />
+                WATCH AD FOR +2 GEMS 💎
+              </button>
 
               {/* Day Tracker Grid */}
               <div className="grid grid-cols-4 gap-2">
