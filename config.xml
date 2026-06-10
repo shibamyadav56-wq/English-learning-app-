@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns="http://www.w3.org/ns/widgets" id="com.example.englishapp" version="1.0.0">
+    <name>English Learning App</name>
+    <platform name="android">
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <meta-data android:name="com.google.android.gms.gms.ads.APPLICATION_ID" android:value="ca-app-pub-3940256099942544~3347513513"/>
+        </config-file>
+    </platform>
+</widget>
